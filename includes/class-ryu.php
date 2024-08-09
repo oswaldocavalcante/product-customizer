@@ -87,8 +87,8 @@ class Ryu {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
-
+	private function load_dependencies()
+	{
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
@@ -105,7 +105,6 @@ class Ryu {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ryu-public.php';
-
 	}
 
 	/**
@@ -119,7 +118,6 @@ class Ryu {
 	 */
 	private function set_locale()
 	{
-
 		$plugin_i18n = new Ryu_i18n();
 
 		add_action('plugins_loaded', array($plugin_i18n, 'load_plugin_textdomain'));
@@ -132,13 +130,12 @@ class Ryu {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
-
+	private function define_admin_hooks()
+	{
 		$plugin_admin = new Ryu_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_styles' ));
 		add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_scripts' ));
-
 	}
 
 	/**
@@ -148,13 +145,12 @@ class Ryu {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
-
+	private function define_public_hooks()
+	{
 		$plugin_public = new Ryu_Public( $this->get_plugin_name(), $this->get_version() );
 
-		add_action( 'wp_enqueue_scripts', array($plugin_public, 'enqueue_styles' ));
-		add_action( 'wp_enqueue_scripts', array($plugin_public, 'enqueue_scripts' ));
-
+		add_action('woocommerce_after_single_product', array($plugin_public, 'add_customizer'));
+		add_action('woocommerce_single_product_summary', array($plugin_public, 'add_customizer_options'), 50);
 	}
 
 	/**
@@ -164,7 +160,8 @@ class Ryu {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
+	public function get_plugin_name() 
+	{
 		return $this->plugin_name;
 	}
 
@@ -174,7 +171,8 @@ class Ryu {
 	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
 	 */
-	public function get_version() {
+	public function get_version() 
+	{
 		return $this->version;
 	}
 

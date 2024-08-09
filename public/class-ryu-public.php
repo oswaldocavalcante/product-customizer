@@ -84,7 +84,7 @@ class Ryu_Public {
 
 	public function add_customizer_options()
 	{
-		echo '<div id="ryu_option">Golas</div>';
+		echo '<div id="ryu_option"><a class="button">Golas</a></div>';
 	}
 
 }

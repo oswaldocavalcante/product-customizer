@@ -1,0 +1,55 @@
+#ryu_product_customizations .expand-close
+{
+    float: right;
+    line-height: 32px;
+}
+
+#ryu_product_customizations .wc-metabox-content
+{
+    display: flex;
+
+}
+
+#ryu_product_customizations .upload_image
+{
+    margin-top: 0;
+}
+
+#ryu_product_customizations .upload_image_button
+{
+    display: block;
+    width: 100%;
+    height: 150px;
+    margin-right: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+#ryu_product_customizations .upload_image_button:before
+{
+    content: "\f128";
+    font-family: Dashicons;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    line-height: 150px;
+    font-size: 80px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+}
+
+#ryu_product_customizations .data
+{
+    display: block;
+    padding: 1em 2em;
+    max-width: 150px;
+}
+
+#ryu_product_customizations .data input
+{
+    width: 100%;
+    margin-bottom: 10px;
+}

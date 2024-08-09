@@ -56,7 +56,8 @@ class Ryu {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		if ( defined( 'RYU_VERSION' ) ) {
 			$this->version = RYU_VERSION;
 		} else {
@@ -68,7 +69,6 @@ class Ryu {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -134,8 +134,9 @@ class Ryu {
 	{
 		$plugin_admin = new Ryu_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_styles' ));
-		add_action( 'admin_enqueue_scripts', array($plugin_admin, 'enqueue_scripts' ));
+		add_filter('woocommerce_product_data_tabs', array($plugin_admin, 'add_customization_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
+		add_action('woocommerce_product_data_panels', array($plugin_admin, 'add_customization_panel')); // Adiciona o conteúdo da aba de personalização
+		add_action('woocommerce_process_product_meta', array($plugin_admin, 'save_customizations')); // Salva os dados da aba de personalização
 	}
 
 	/**
@@ -150,7 +151,7 @@ class Ryu {
 		$plugin_public = new Ryu_Public( $this->get_plugin_name(), $this->get_version() );
 
 		add_action('woocommerce_after_single_product', array($plugin_public, 'add_customizer'));
-		add_action('woocommerce_single_product_summary', array($plugin_public, 'add_customizer_options'), 50);
+		add_action('woocommerce_single_product_summary', array($plugin_public, 'add_customizer_options'), 40);
 	}
 
 	/**

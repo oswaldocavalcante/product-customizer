@@ -49,3 +49,4 @@ wp-config.php
 .DS_Store*
 /wp-content
 /vendor
+product-customizer.code-workspace

@@ -72,12 +72,14 @@ class Pcw_Admin
 		wp_enqueue_script('pcw-admin-customization', plugin_dir_url(__FILE__) . 'js/pcw-admin-customization.js', array('jquery'), $this->version, false);
 		wp_enqueue_style('pcw-admin-customization', plugin_dir_url(__FILE__) . 'css/pcw-admin-customization.css', array(), $this->version, 'all');
 
-		?>
+?>
 		<div id="pcw_product_customizations" class="panel wc-metaboxes-wrapper">
+
 			<div class="toolbar toolbar-top">
 				<div id="message" class="inline notice woocommerce-message is-dismissible" style="display: none;">
 					<p class="help">
-						Adicione as variações de personalização para este produto. <button type="button" class="notice-dismiss"><span class="screen-reader-text">Esconder esta mensagem.</span></button>
+						<span>Adicione as variações de personalização para este produto.</span>
+						<button type="button" class="notice-dismiss"><span class="screen-reader-text">Esconder esta mensagem.</span></button>
 					</p>
 				</div>
 				<span class="expand-close">
@@ -88,48 +90,45 @@ class Pcw_Admin
 					<button type="button" class="add_customization_option button"><?php _e('Add new', 'woocommerce'); ?></button>
 				</div>
 			</div>
+
 			<div id="customization_options" class="wc-metaboxes ui-sortable">
-				<?php
-				// Aqui você pode carregar as opções salvas e criar uma div para cada uma
-				$customizations = get_post_meta(get_the_ID(), '_customization_options', true);
 
-				if (!empty($customizations) && is_array($customizations)) :
-					foreach ($customizations as $key => $customization) : 
-						?>
-						<div class="woocommerce_variation wc-metabox closed">
-							<h3>
-								<a href="#" class="remove_row delete"><?php _e('Remove', 'pcw'); ?></a>
-								<div class="handlediv" aria-label="Click to toggle"><br></div>
-								<strong><?php echo esc_html($customization['name']); ?></strong>
-							</h3>
-							<div class="wc-metabox-content hidden">
-								<div class="data">
-									<p class="form-field">
-										<label for="customization_name_<?php echo $key; ?>"><?php _e('Option Name', 'pcw'); ?></label>
-										<input type="text" class="option_name" name="customization_name[]" id="customization_name_<?php echo $key; ?>" value="<?php echo esc_attr($customization['name']); ?>" />
+				<?php include_once PCW_ABSPATH . 'admin/views/templates/customization-metabox.php' ?>
 
-										<label for="customization_image_<?php echo $key; ?>"><?php _e('Option Image', 'pcw'); ?></label>
-										<input type="hidden" class="option_image" name="customization_image[]" id="customization_image_<?php echo $key; ?>" value="<?php echo esc_attr($customization['image']); ?>" />
-										<button type="button" class="upload_image_button button"><?php _e('Upload Image', 'pcw'); ?></button>
-									</p>
-									<div class="image_preview">
-										<?php if ($customization['image']) : ?>
-											<img src="<?php echo esc_url($customization['image']); ?>" style="max-width: 100px;">
-										<?php endif; ?>
-									</div>
-								</div>
-							</div>
+				<div class="woocommerce_variation wc-metabox closed">
+					<h3>
+						<div class="handlediv" aria-label="Click to toggle"><br></div>
+						<strong><?php esc_html_e('Colors', 'pcw'); ?></strong>
+					</h3>
+					<div class="wc-metabox-content hidden">
+						<div class="toolbar">
+								<input type="text" placeholder="#FF0000" />
+								<button type="button" class="button">Add color</button>
 						</div>
-						<?php
-					endforeach;
-				endif; ?>
+						<div class="pwc_color_display"></div>
+					</div>
+				</div>
+
+				<div class="woocommerce_variation wc-metabox closed">
+					<h3>
+						<div class="handlediv" aria-label="Click to toggle"><br></div>
+						<strong><?php esc_html_e('Background', 'pcw'); ?></strong>
+					</h3>
+					<div class="wc-metabox-content hidden">
+						<div class="data">
+							Background
+						</div>
+					</div>
+				</div>
+
 			</div>
+
 			<div class="toolbar toolbar-buttons">
 				<button type="button" class="save_customizations button button-primary"><?php _e('Save customizations', 'pcw'); ?></button>
 			</div>
 
 		</div>
-		<?php
+<?php
 	}
 
 	public function save_customizations($post_id)
@@ -156,6 +155,7 @@ class Pcw_Admin
 			foreach ($_POST['customization_name'] as $index => $name) {
 				$customization_options[] = array(
 					'name'  => sanitize_text_field($name),
+					'cost' 	=> sanitize_text_field($_POST['customization_cost'][$index]),
 					'image' => sanitize_text_field($_POST['customization_image'][$index]),
 				);
 			}

@@ -30,12 +30,19 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+if (!defined('PCW_PLUGIN_FILE')) {
+	define('PCW_PLUGIN_FILE', __FILE__);
+}
+
+define('PCW_ABSPATH', dirname(PCW_PLUGIN_FILE) . '/');
+define('PCW_URL', plugins_url('/', __FILE__));
+
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'RYU_VERSION', '1.0.0' );
+define( 'PCW_VERSION', '1.0.0' );
 
 /**
  * The code that runs during plugin activation.

@@ -58,8 +58,8 @@ class Pcw {
 	 */
 	public function __construct()
 	{
-		if ( defined( 'RYU_VERSION' ) ) {
-			$this->version = RYU_VERSION;
+		if ( defined( 'PCW_VERSION' ) ) {
+			$this->version = PCW_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -134,9 +134,9 @@ class Pcw {
 	{
 		$plugin_admin = new Pcw_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		add_filter('woocommerce_product_data_tabs', array($plugin_admin, 'add_customization_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
-		add_action('woocommerce_product_data_panels', array($plugin_admin, 'add_customization_panel')); // Adiciona o conteúdo da aba de personalização
-		add_action('woocommerce_process_product_meta', array($plugin_admin, 'save_customizations')); // Salva os dados da aba de personalização
+		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_customization_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
+		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_customization_panel')); // Adiciona o conteúdo da aba de personalização
+		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save_customizations')); // Salva os dados da aba de personalização
 	}
 
 	/**

@@ -6,8 +6,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Ryu_Activator {
+class Pcw_Activator {
 
 	/**
 	 * Short Description. (use period)

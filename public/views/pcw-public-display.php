@@ -8,8 +8,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/public/partials
+ * @package    Pcw
+ * @subpackage Pcw/public/partials
  */
 ?>
 

@@ -6,8 +6,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/public
+ * @package    Pcw
+ * @subpackage Pcw/public
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
- * @package    Ryu
- * @subpackage Ryu/public
+ * @package    Pcw
+ * @subpackage Pcw/public
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Ryu_Public {
+class Pcw_Public {
 
 	/**
 	 * The ID of this plugin.
@@ -60,7 +60,7 @@ class Ryu_Public {
 	 */
 	public function enqueue_styles()
 	{
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ryu-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pcw-public.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -76,15 +76,17 @@ class Ryu_Public {
 	public function add_customizer()
 	{
 		$wc_product = wc_get_product(get_the_ID());
+		$image_url = wp_get_attachment_image_url($wc_product->get_image_id(), [400, 400]);
 
 		if($wc_product->is_on_backorder()) {
-			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/ryu-public.js', array('jquery', 'woocommerce'), $this->version, true);
+			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce'), $this->version, true);
 		}
 	}
 
 	public function add_customizer_options()
 	{
-		echo '<div id="ryu_option"><a class="button">Golas</a></div>';
+		echo '<div id="pcw_option"><a class="button">Personalizar</a></div>';
+		echo '';
 	}
 
 }

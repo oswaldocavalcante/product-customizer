@@ -9,8 +9,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  */
 
 /**
@@ -23,11 +23,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Ryu {
+class Pcw {
 
 	/**
 	 * The unique identifier of this plugin.
@@ -63,7 +63,7 @@ class Ryu {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'ryu';
+		$this->plugin_name = 'pcw';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -76,10 +76,10 @@ class Ryu {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Ryu_Loader. Orchestrates the hooks of the plugin.
-	 * - Ryu_i18n. Defines internationalization functionality.
-	 * - Ryu_Admin. Defines all hooks for the admin area.
-	 * - Ryu_Public. Defines all hooks for the public side of the site.
+	 * - Pcw_Loader. Orchestrates the hooks of the plugin.
+	 * - Pcw_i18n. Defines internationalization functionality.
+	 * - Pcw_Admin. Defines all hooks for the admin area.
+	 * - Pcw_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -93,24 +93,24 @@ class Ryu {
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ryu-i18n.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-pcw-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ryu-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-pcw-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ryu-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-pcw-public.php';
 	}
 
 	/**
 	 * Define the locale for this plugin for internationalization.
 	 *
-	 * Uses the Ryu_i18n class in order to set the domain and to register the hook
+	 * Uses the Pcw_i18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
 	 * @since    1.0.0
@@ -118,7 +118,7 @@ class Ryu {
 	 */
 	private function set_locale()
 	{
-		$plugin_i18n = new Ryu_i18n();
+		$plugin_i18n = new Pcw_i18n();
 
 		add_action('plugins_loaded', array($plugin_i18n, 'load_plugin_textdomain'));
 	}
@@ -132,7 +132,7 @@ class Ryu {
 	 */
 	private function define_admin_hooks()
 	{
-		$plugin_admin = new Ryu_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Pcw_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		add_filter('woocommerce_product_data_tabs', array($plugin_admin, 'add_customization_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
 		add_action('woocommerce_product_data_panels', array($plugin_admin, 'add_customization_panel')); // Adiciona o conteúdo da aba de personalização
@@ -148,7 +148,7 @@ class Ryu {
 	 */
 	private function define_public_hooks()
 	{
-		$plugin_public = new Ryu_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Pcw_Public( $this->get_plugin_name(), $this->get_version() );
 
 		add_action('woocommerce_after_single_product', array($plugin_public, 'add_customizer'));
 		add_action('woocommerce_single_product_summary', array($plugin_public, 'add_customizer_options'), 40);

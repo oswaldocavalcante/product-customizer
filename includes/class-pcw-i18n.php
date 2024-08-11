@@ -9,8 +9,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Ryu
- * @subpackage Ryu/includes
+ * @package    Pcw
+ * @subpackage Pcw/includes
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Ryu_i18n {
+class Pcw_i18n {
 
 
 	/**
@@ -35,7 +35,7 @@ class Ryu_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'ryu',
+			'pcw',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);

@@ -6,8 +6,8 @@
  * @link       https://oswaldocavalcante.com
  * @since      1.0.0
  *
- * @package    Ryu
- * @subpackage Ryu/admin
+ * @package    Pcw
+ * @subpackage Pcw/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Ryu
- * @subpackage Ryu/admin
+ * @package    Pcw
+ * @subpackage Pcw/admin
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Ryu_Admin
+class Pcw_Admin
 {
 
 	/**
@@ -58,8 +58,8 @@ class Ryu_Admin
 	{
 		// Insert the new tab before the "Advanced" tab
 		$tabs['customization'] = array(
-			'label'    => __('Customizations', 'ryu'),
-			'target'   => 'ryu_product_customizations',
+			'label'    => __('Customizations', 'pcw'),
+			'target'   => 'pcw_product_customizations',
 			'class'    => array('show_if_simple', 'show_if_variable'),
 			'priority' => 10, // Priority to appear between "Variations" and "Advanced"
 		);
@@ -69,11 +69,11 @@ class Ryu_Admin
 
 	public function add_customization_panel()
 	{
-		wp_enqueue_script('ryu-admin-customization', plugin_dir_url(__FILE__) . 'js/ryu-admin-customization.js', array('jquery'), $this->version, false);
-		wp_enqueue_style('ryu-admin-customization', plugin_dir_url(__FILE__) . 'css/ryu-admin-customization.css', array(), $this->version, 'all');
+		wp_enqueue_script('pcw-admin-customization', plugin_dir_url(__FILE__) . 'js/pcw-admin-customization.js', array('jquery'), $this->version, false);
+		wp_enqueue_style('pcw-admin-customization', plugin_dir_url(__FILE__) . 'css/pcw-admin-customization.css', array(), $this->version, 'all');
 
 		?>
-		<div id="ryu_product_customizations" class="panel wc-metaboxes-wrapper">
+		<div id="pcw_product_customizations" class="panel wc-metaboxes-wrapper">
 			<div class="toolbar toolbar-top">
 				<div id="message" class="inline notice woocommerce-message is-dismissible" style="display: none;">
 					<p class="help">
@@ -84,7 +84,7 @@ class Ryu_Admin
 					<a href="#" class="expand_all">Expandir</a> / <a href="#" class="close_all">Fechar</a>
 				</span>
 				<div class="actions">
-					<input type="text" id="new_customization_name" placeholder="<?php _e('Enter customization', 'ryu'); ?>" />
+					<input type="text" id="new_customization_name" placeholder="<?php _e('Enter customization', 'pcw'); ?>" />
 					<button type="button" class="add_customization_option button"><?php _e('Add new', 'woocommerce'); ?></button>
 				</div>
 			</div>
@@ -93,45 +93,46 @@ class Ryu_Admin
 				// Aqui você pode carregar as opções salvas e criar uma div para cada uma
 				$customizations = get_post_meta(get_the_ID(), '_customization_options', true);
 
-				if (!empty($customizations) && is_array($customizations)) {
-					foreach ($customizations as $key => $customization) {
-				?>
+				if (!empty($customizations) && is_array($customizations)) :
+					foreach ($customizations as $key => $customization) : 
+						?>
 						<div class="woocommerce_variation wc-metabox closed">
 							<h3>
-								<a href="#" class="remove_row delete"><?php _e('Remove', 'ryu'); ?></a>
+								<a href="#" class="remove_row delete"><?php _e('Remove', 'pcw'); ?></a>
 								<div class="handlediv" aria-label="Click to toggle"><br></div>
 								<strong><?php echo esc_html($customization['name']); ?></strong>
 							</h3>
-							<div class="options_group">
-								<p class="form-field">
-									<label for="customization_name_<?php echo $key; ?>"><?php _e('Option Name', 'ryu'); ?></label>
-									<input type="text" class="option_name" name="customization_name[]" id="customization_name_<?php echo $key; ?>" value="<?php echo esc_attr($customization['name']); ?>" />
+							<div class="wc-metabox-content hidden">
+								<div class="data">
+									<p class="form-field">
+										<label for="customization_name_<?php echo $key; ?>"><?php _e('Option Name', 'pcw'); ?></label>
+										<input type="text" class="option_name" name="customization_name[]" id="customization_name_<?php echo $key; ?>" value="<?php echo esc_attr($customization['name']); ?>" />
 
-									<label for="customization_image_<?php echo $key; ?>"><?php _e('Option Image', 'ryu'); ?></label>
-									<input type="hidden" class="option_image" name="customization_image[]" id="customization_image_<?php echo $key; ?>" value="<?php echo esc_attr($customization['image']); ?>" />
-									<button type="button" class="upload_image_button button"><?php _e('Upload Image', 'ryu'); ?></button>
-								<div class="image_preview">
-									<?php if ($customization['image']) : ?>
-										<img src="<?php echo esc_url($customization['image']); ?>" style="max-width: 100px;">
-									<?php endif; ?>
+										<label for="customization_image_<?php echo $key; ?>"><?php _e('Option Image', 'pcw'); ?></label>
+										<input type="hidden" class="option_image" name="customization_image[]" id="customization_image_<?php echo $key; ?>" value="<?php echo esc_attr($customization['image']); ?>" />
+										<button type="button" class="upload_image_button button"><?php _e('Upload Image', 'pcw'); ?></button>
+									</p>
+									<div class="image_preview">
+										<?php if ($customization['image']) : ?>
+											<img src="<?php echo esc_url($customization['image']); ?>" style="max-width: 100px;">
+										<?php endif; ?>
+									</div>
 								</div>
-								</p>
 							</div>
 						</div>
-				<?php
-					}
-				}
-				?>
+						<?php
+					endforeach;
+				endif; ?>
 			</div>
 			<div class="toolbar toolbar-buttons">
-				<button type="button" class="save_customizations button button-primary"><?php _e('Save customizations', 'ryu'); ?></button>
+				<button type="button" class="save_customizations button button-primary"><?php _e('Save customizations', 'pcw'); ?></button>
 			</div>
 
 		</div>
 		<?php
 	}
 
-	public function save_customization($post_id)
+	public function save_customizations($post_id)
 	{
 		// Verifica se é um autosave para evitar sobrescrever dados
 		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {

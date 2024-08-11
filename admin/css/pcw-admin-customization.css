@@ -1,21 +1,21 @@
-#ryu_product_customizations .expand-close
+#pcw_product_customizations .expand-close
 {
     float: right;
     line-height: 32px;
 }
 
-#ryu_product_customizations .wc-metabox-content
+#pcw_product_customizations .wc-metabox-content
 {
     display: flex;
 
 }
 
-#ryu_product_customizations .upload_image
+#pcw_product_customizations .upload_image
 {
     margin-top: 0;
 }
 
-#ryu_product_customizations .upload_image_button
+#pcw_product_customizations .upload_image_button
 {
     display: block;
     width: 100%;
@@ -25,7 +25,7 @@
     cursor: pointer;
 }
 
-#ryu_product_customizations .upload_image_button:before
+#pcw_product_customizations .upload_image_button:before
 {
     content: "\f128";
     font-family: Dashicons;
@@ -41,14 +41,14 @@
     -webkit-font-smoothing: antialiased;
 }
 
-#ryu_product_customizations .data
+#pcw_product_customizations .data
 {
     display: block;
     padding: 1em 2em;
     max-width: 150px;
 }
 
-#ryu_product_customizations .data input
+#pcw_product_customizations .data input
 {
     width: 100%;
     margin-bottom: 10px;

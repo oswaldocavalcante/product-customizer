@@ -1,8 +1,28 @@
 jQuery(document).ready(function ($) {
-    var frame;
+
+    $('#pwc_button_add_color').on('click', function () {
+        var colorValue  = $('#pwc_new_color_value').val();
+        var colorName   = $('#pwc_new_color_name').val();
+        var colorIndex  = $('#pwc_color_display').length;
+
+        if(!colorValue || !colorName) {
+            alert('Please insert a name and hexadecimal color value.');
+            return;
+        }
+
+        var newColorOption = `
+            <div class="gcw_color_display" style="background-color:${colorValue}; width: 50px; height: 50px;">
+                <input type="text" name="pcw_color_value[]" id="pcw_color_value_${colorIndex}" value="${colorValue}"/>
+                <input type="text" name="pcw_color_name[]" id="pcw_color_name_${colorIndex}" value="${colorName}"/>
+            </div>
+        `;
+
+        $('#pwc_colors_container').append(newColorOption);
+    });
+    
     // Adicionar nova opção de personalização
-    $('.add_customization_option').on('click', function () {
-        var optionName = $('#new_customization_name').val().trim();
+    $('#pwc_button_add_option').on('click', function () {
+        var optionName = $('#pwc_new_option_name').val().trim();
 
         if (optionName === '') {
             alert('<?php _e("Please enter a name for the option.", "pcw"); ?>');
@@ -21,15 +41,15 @@ jQuery(document).ready(function ($) {
                 <div class="wc-metabox-content hidden">
                     <div class="data">
                         <p class="upload_image">
-                            <label for="customization_image_${customizationIndex}"><?php _e('Option Image', 'pcw'); ?></label>
-                            <input type="hidden" class="option_image" name="customization_image[]" id="customization_image_${customizationIndex}" />
-                            <a class="upload_image_button button"><?php _e('Upload Image', 'pcw'); ?></a>
+                            <label for="pwc_option_image_${customizationIndex}"><?php _e('Option Image', 'pcw'); ?></label>
+                            <input type="hidden" class="pcw_image" name="pwc_option_image[]" id="pwc_option_image_${customizationIndex}" />
+                            <a class="pcw_button_upload_image button"><?php _e('Upload Image', 'pcw'); ?></a>
                         </p>
                         <p class="options_inputs">
-                            <label for="customization_name_${customizationIndex}"><?php _e('Option Name', 'pcw'); ?></label>
-                            <input type="text" class="option_name" name="customization_name[]" id="customization_name_${customizationIndex}" placeholder="Nome" />
-                            <label for="customization_cost_${customizationIndex}"><?php _e('Option Cost', 'pcw'); ?></label>
-                            <input type="text" class="option_name" name="customization_cost[]" id="customization_cost_${customizationIndex}" placeholder="Custo R$" />
+                            <label for="pwc_option_name_${customizationIndex}"><?php _e('Option Name', 'pcw'); ?></label>
+                            <input type="text" class="option_name" name="pwc_option_name[]" id="pwc_option_name_${customizationIndex}" placeholder="Nome" />
+                            <label for="pwc_option_cost_${customizationIndex}"><?php _e('Option Cost', 'pcw'); ?></label>
+                            <input type="text" class="option_name" name="pwc_option_cost[]" id="pwc_option_cost_${customizationIndex}" placeholder="Custo R$" />
                         </p>
                         <div class="image_preview"></div>
                     </div>
@@ -39,7 +59,7 @@ jQuery(document).ready(function ($) {
         $('#customization_options').append(newOption);
 
         // Limpar o campo de entrada após adicionar a nova opção
-        $('#new_customization_name').val('');
+        $('#pwc_new_option_name').val('');
     });
 
     // Remover opção de personalização
@@ -49,11 +69,12 @@ jQuery(document).ready(function ($) {
     });
 
     // Ação para carregar imagem
-    $(document).on('click', '.upload_image_button', function (e) {
+    var frame;
+    $(document).on('click', '.pcw_button_upload_image', function (e) {
         e.preventDefault();
 
         var $button = $(this);
-        var $input = $button.siblings('.option_image');
+        var $input = $button.siblings('.pcw_image');
         var $preview = $button.siblings('.image_preview');
 
         // Cria o media frame

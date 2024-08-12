@@ -150,8 +150,9 @@ class Pcw {
 	{
 		$plugin_public = new Pcw_Public( $this->get_plugin_name(), $this->get_version() );
 
-		add_action('woocommerce_after_single_product', array($plugin_public, 'add_customizer'));
-		add_action('woocommerce_single_product_summary', array($plugin_public, 'add_customizer_options'), 40);
+		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'add_background'), 	5);
+		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'add_options'), 		40);
+		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_script')			);
 	}
 
 	/**

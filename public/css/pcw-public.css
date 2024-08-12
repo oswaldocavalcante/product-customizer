@@ -1,4 +1,9 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+.pcw_color
+{
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    margin-right: 4px;
+}

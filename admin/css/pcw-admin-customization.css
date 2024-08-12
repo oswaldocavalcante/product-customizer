@@ -1,21 +1,21 @@
-#pcw_product_customizations .expand-close
+#pcw_metaboxes_wrapper .expand-close
 {
     float: right;
     line-height: 32px;
 }
 
-#pcw_product_customizations .wc-metabox-content
+#pcw_metaboxes_wrapper .wc-metabox-content
 {
     display: flex;
 
 }
 
-#pcw_product_customizations .upload_image
+#pcw_metaboxes_wrapper .upload_image
 {
     margin-top: 0;
 }
 
-#pcw_product_customizations .upload_image_button
+#pcw_metaboxes_wrapper .pcw_button_upload_image
 {
     display: block;
     width: 100%;
@@ -25,7 +25,7 @@
     cursor: pointer;
 }
 
-#pcw_product_customizations .upload_image_button:before
+#pcw_metaboxes_wrapper .pcw_button_upload_image:before
 {
     content: "\f128";
     font-family: Dashicons;
@@ -41,14 +41,14 @@
     -webkit-font-smoothing: antialiased;
 }
 
-#pcw_product_customizations .data
+#pcw_metaboxes_wrapper .data
 {
     display: block;
     padding: 1em 2em;
     max-width: 150px;
 }
 
-#pcw_product_customizations .data input
+#pcw_metaboxes_wrapper .data input
 {
     width: 100%;
     margin-bottom: 10px;

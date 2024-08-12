@@ -59,7 +59,7 @@ class Pcw_Admin
 		// Insert the new tab before the "Advanced" tab
 		$tabs['customization'] = array(
 			'label'    => __('Customizations', 'pcw'),
-			'target'   => 'pcw_product_customizations',
+			'target'   => 'pcw_metaboxes_wrapper',
 			'class'    => array('show_if_simple', 'show_if_variable'),
 			'priority' => 10, // Priority to appear between "Variations" and "Advanced"
 		);
@@ -73,7 +73,7 @@ class Pcw_Admin
 		wp_enqueue_style('pcw-admin-customization', plugin_dir_url(__FILE__) . 'css/pcw-admin-customization.css', array(), $this->version, 'all');
 
 ?>
-		<div id="pcw_product_customizations" class="panel wc-metaboxes-wrapper">
+		<div id="pcw_metaboxes_wrapper" class="panel wc-metaboxes-wrapper">
 
 			<div class="toolbar toolbar-top">
 				<div id="message" class="inline notice woocommerce-message is-dismissible" style="display: none;">
@@ -86,15 +86,17 @@ class Pcw_Admin
 					<a href="#" class="expand_all">Expandir</a> / <a href="#" class="close_all">Fechar</a>
 				</span>
 				<div class="actions">
-					<input type="text" id="new_customization_name" placeholder="<?php _e('Enter customization', 'pcw'); ?>" />
-					<button type="button" class="add_customization_option button"><?php _e('Add new', 'woocommerce'); ?></button>
+					<input type="text" id="pwc_new_option_name" placeholder="<?php _e('Enter customization', 'pcw'); ?>" />
+					<button type="button" id="pwc_button_add_option" class="button"><?php _e('Add new', 'woocommerce'); ?></button>
 				</div>
 			</div>
 
 			<div id="customization_options" class="wc-metaboxes ui-sortable">
 
-				<?php include_once PCW_ABSPATH . 'admin/views/templates/customization-metabox.php' ?>
+				<!-- Added options -->
+				<?php include_once PCW_ABSPATH . 'admin/views/templates/customization-metabox.php'; ?>
 
+				<!-- Colors -->
 				<div class="woocommerce_variation wc-metabox closed">
 					<h3>
 						<div class="handlediv" aria-label="Click to toggle"><br></div>
@@ -102,13 +104,25 @@ class Pcw_Admin
 					</h3>
 					<div class="wc-metabox-content hidden">
 						<div class="toolbar">
-								<input type="text" placeholder="#FF0000" />
-								<button type="button" class="button">Add color</button>
+							<div id="message" class="inline notice woocommerce-message is-dismissible" style="display: none;">
+								<p class="help">
+									<span>Adicione as variações de cor para a imagem principal do produto.</span>
+									<button type="button" class="notice-dismiss"><span class="screen-reader-text">Esconder esta mensagem.</span></button>
+								</p>
+							</div>
+							<div class="actions">
+								<input type="text" id="pwc_new_color_value" placeholder="Hexadecimal color: #FF0000" />
+								<input type="text" id="pwc_new_color_name" placeholder="Color name: Red velvet" />
+								<button type="button" id="pwc_button_add_color" class="button">Add color</button>
+							</div>
 						</div>
-						<div class="pwc_color_display"></div>
+						<div id="pwc_colors_container">
+							<?php include_once PCW_ABSPATH . 'admin/views/templates/color-display.php'; ?>
+						</div>
 					</div>
 				</div>
 
+				<!-- Background -->
 				<div class="woocommerce_variation wc-metabox closed">
 					<h3>
 						<div class="handlediv" aria-label="Click to toggle"><br></div>
@@ -116,7 +130,19 @@ class Pcw_Admin
 					</h3>
 					<div class="wc-metabox-content hidden">
 						<div class="data">
-							Background
+							<p class="upload_image">
+								<input type="hidden" class="pcw_image" name="pcw_background" id="pcw_background" />
+								<a class="pcw_button_upload_image button">
+									<?php 
+									$background = get_post_meta(get_the_ID(), 'pcw_background', true);
+
+									if ($background) : ?>
+										<img src="<?php echo esc_url($background); ?>" style="max-width: 100px;">
+									<?php else: _e('Upload Image', 'pcw');
+									endif; ?>
+								</a>
+							</p>
+							<div class="image_preview"></div>
 						</div>
 					</div>
 				</div>
@@ -124,7 +150,7 @@ class Pcw_Admin
 			</div>
 
 			<div class="toolbar toolbar-buttons">
-				<button type="button" class="save_customizations button button-primary"><?php _e('Save customizations', 'pcw'); ?></button>
+				<button type="button" class="pcw_button_save_customizations button button-primary"><?php _e('Save customizations', 'pcw'); ?></button>
 			</div>
 
 		</div>
@@ -149,19 +175,39 @@ class Pcw_Admin
 		}
 
 		// Verifica se a aba Customization foi preenchida
-		if (isset($_POST['customization_name']) && isset($_POST['customization_image'])) {
+		if (isset($_POST['pwc_option_name']) && isset($_POST['pwc_option_image']) && isset($_POST['pwc_option_cost'])) {
 			$customization_options = array();
 
-			foreach ($_POST['customization_name'] as $index => $name) {
+			foreach ($_POST['pwc_option_name'] as $index => $name) {
 				$customization_options[] = array(
 					'name'  => sanitize_text_field($name),
-					'cost' 	=> sanitize_text_field($_POST['customization_cost'][$index]),
-					'image' => sanitize_text_field($_POST['customization_image'][$index]),
+					'cost' 	=> sanitize_text_field($_POST['pwc_option_cost'][$index]),
+					'image' => sanitize_text_field($_POST['pwc_option_image'][$index]),
 				);
 			}
 
 			// Salva as opções de personalização como meta dados
-			update_post_meta($post_id, '_customization_options', $customization_options);
+			update_post_meta($post_id, 'pcw_options', $customization_options);
+		}
+
+		if (isset($_POST['pcw_color_name']) && isset($_POST['pcw_color_value'])) {
+			$pcw_colors = array();
+
+			foreach ($_POST['pcw_color_name'] as $index => $name) {
+				$pcw_colors[] = array(
+					'name' 	=> sanitize_text_field($name),
+					'value' => sanitize_text_field($_POST['pcw_color_value'][$index]),
+				);
+			}
+
+			// Salva as opções de personalização como meta dados
+			update_post_meta($post_id, 'pcw_colors', $pcw_colors);
+		}
+
+		if (isset($_POST['pcw_background'])) {
+			$pcw_background = $_POST['pcw_background'];
+
+			update_post_meta($post_id, 'pcw_background', $pcw_background);
 		}
 	}
 }

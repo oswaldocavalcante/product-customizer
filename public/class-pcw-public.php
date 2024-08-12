@@ -20,7 +20,8 @@
  * @subpackage Pcw/public
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Pcw_Public {
+class Pcw_Public
+{
 
 	/**
 	 * The ID of this plugin.
@@ -47,46 +48,47 @@ class Pcw_Public {
 	 * @param      string    $plugin_name       The name of the plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version )
+	public function __construct($plugin_name, $version)
 	{
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 	}
 
-	/**
-	 * Register the stylesheets for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles()
-	{
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/pcw-public.css', array(), $this->version, 'all' );
-	}
-
-	/**
-	 * Register the JavaScript for the public-facing side of the site.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts()
-	{
-		
-	}
-
-	public function add_customizer()
+	public function add_script()
 	{
 		$wc_product = wc_get_product(get_the_ID());
-		$image_url = wp_get_attachment_image_url($wc_product->get_image_id(), [400, 400]);
 
-		if($wc_product->is_on_backorder()) {
+		if ($wc_product->is_on_backorder()) {
 			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce'), $this->version, true);
+			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), $this->version, 'all');
 		}
 	}
 
-	public function add_customizer_options()
+	public function add_options()
 	{
-		echo '<div id="pcw_option"><a class="button">Personalizar</a></div>';
-		echo '';
+		$colors = get_post_meta(get_the_ID(), 'pcw_colors', true);
+		if (!empty($colors) && is_array($colors)) {
+			echo '<a class="pcw_color" style="background-color: #FFFFFF"></a>';
+
+			foreach ($colors as $color) {
+				echo '<a class="pcw_color" style="background-color:' . $color['value'] . '"></a>';
+			}
+		}
 	}
 
+	public function add_background()
+	{
+		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
+		if ($background) {
+?>
+			<style>
+				.flex-viewport {
+					background-image: url('<?php echo esc_attr($background); ?>');
+					background-size: cover;
+					background-position: center;
+				}
+			</style>
+<?php
+		}
+	}
 }

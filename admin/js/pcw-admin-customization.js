@@ -14,14 +14,15 @@ jQuery(document).ready(function ($) {
         var newLayer = `
             <div id="pcw_layer_${layerIndex}" class="pcw_layer wc-metabox open">
                 <h3>
-                    <a href="#" class="remove_row delete"><?php _e('Remove', 'pcw'); ?></a>
+                    <a href="#" class="remove_row delete">Remove</a>
                     <div class="handlediv" aria-label="Click to toggle"><br></div>
                     <strong>${layerName}</strong>
                     <input type="hidden" name="pcw_layer[${layerIndex}]" value="${layerName}" />
                 </h3>
-                <div id="pcw_layer_options_${layerIndex}" class="wc-metabox-content hidden">
+                <div class="wc-metabox-content">
+                    <a class="pcw_button_add_option button">New option</a>
+                    <div id="pcw_layer_options_${layerIndex}" class="pcw_layer_options"></div>
                 </div>
-                <a class="pcw_button_add_option button">New option</a>
             </div>
         `;
         
@@ -90,7 +91,6 @@ jQuery(document).ready(function ($) {
     });
 
     // Ação para carregar imagem
-    var frame;
     $(document).on('click', '.pcw_button_upload_image', function (e) {
         e.preventDefault();
 
@@ -103,7 +103,7 @@ jQuery(document).ready(function ($) {
             return;
         }
 
-        frame = wp.media({
+        var frame = wp.media({
             title: 'Select or Upload an Image',
             button: {
                 text: 'Use this image'
@@ -115,6 +115,7 @@ jQuery(document).ready(function ($) {
         frame.on('select', function () {
             var attachment = frame.state().get('selection').first().toJSON();
             $input.val(attachment.url);
+            console.log($input);
             // $preview.html('<img src="' + attachment.url + '" style="max-width: 100px;">');
         });
 

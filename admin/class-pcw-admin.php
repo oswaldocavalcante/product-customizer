@@ -95,7 +95,7 @@ class Pcw_Admin
 
 				<!-- Layers -->
 				<div id="pcw_metabox_layers">
-					<?php include_once PCW_ABSPATH . 'admin/views/templates/metabox-layer.php'; ?>
+					<!-- <?php include_once PCW_ABSPATH . 'admin/views/templates/metabox-layer.php'; ?> -->
 				</div>
 
 				<!-- Colors -->
@@ -193,7 +193,7 @@ class Pcw_Admin
 						'cost' 	=> sanitize_text_field($_POST['pcw_option_cost'][$index_l][$index]),
 						'image' => array(
 							'front' => sanitize_text_field($_POST['pcw_option_image_front'][$index_l][$index]),
-							'back' => sanitize_text_field($_POST['pcw_option_image_back'][$index_l][$index]),
+							'back' 	=> sanitize_text_field($_POST['pcw_option_image_back'][$index_l][$index]),
 						)
 					);
 				}
@@ -206,8 +206,8 @@ class Pcw_Admin
 				$pcw_options = array();
 			}
 
-			// Salva as opções de personalização como meta dados
-			update_post_meta($post_id, 'pcw_customizations', $pcw_layers);
+			// Salva as camadas de personalização como meta dados
+			update_post_meta($post_id, 'pcw_layers', $pcw_layers);
 		}
 
 		if (isset($_POST['pcw_color_name']) && isset($_POST['pcw_color_value']))

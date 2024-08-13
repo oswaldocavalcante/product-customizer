@@ -1,6 +1,6 @@
 <?php
 
-$options = get_post_meta(get_the_ID(), 'pcw_customizations', true);
+$options = get_post_meta(get_the_ID(), 'pcw_layers', true);
 
 if (!empty($options) && is_array($options)) :
     foreach ($options as $key => $option) :

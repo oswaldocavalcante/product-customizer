@@ -66,10 +66,10 @@ class Pcw_Public
 
 	public function add_layers()
 	{
-		$customizations = get_post_meta(get_the_ID(), 'pcw_customizations', true);
-		if (!empty($customizations) && is_array($customizations))
+		$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
+		if (!empty($layers) && is_array($layers))
 		{
-			foreach ($customizations as $customization)
+			foreach ($layers as $layer)
 			{
 				
 			}

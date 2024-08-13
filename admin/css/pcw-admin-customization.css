@@ -3,7 +3,7 @@
     border-bottom: 1px solid #eee;
 }
 
-.pcw_layer
+#pcw_metaboxes_wrapper .pcw_layer
 {
     border-bottom: 1px solid #eee;
 }
@@ -16,26 +16,38 @@
 
 #pcw_metaboxes_wrapper .wc-metabox-content
 {
+    padding: 15px;
+}
+
+.pcw_layer_options
+{
     display: flex;
-
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
 }
 
-#pcw_metaboxes_wrapper .upload_image
+.pcw-option
 {
-    margin-top: 0;
+    width: 200px;
+    border: 1px solid #777;
+    padding: 15px;
+    border-radius: 10px;
 }
 
-#pcw_metaboxes_wrapper .pcw_button_upload_image
+.pcw-option-images
 {
-    display: block;
-    width: 100%;
-    height: 150px;
-    margin-right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.pcw-option-image
+{
     position: relative;
-    cursor: pointer;
+    flex: 1;
 }
 
-#pcw_metaboxes_wrapper .pcw_button_upload_image:before
+.pcw-option-image:before
 {
     content: "\f128";
     font-family: Dashicons;
@@ -45,21 +57,30 @@
     right: 0;
     bottom: 0;
     text-align: center;
-    line-height: 150px;
-    font-size: 80px;
-    font-weight: 400;
+    line-height: 140px;
+    font-size: 60px;
     -webkit-font-smoothing: antialiased;
 }
 
-#pcw_metaboxes_wrapper .data
+#pcw_metabox_layers .pcw_button_upload_image
 {
     display: block;
-    padding: 1em 2em;
-    max-width: 150px;
+    width: 100%;
+    height: 100px;
+    position: relative;
+    background: none;
 }
 
-#pcw_metaboxes_wrapper .data input
+.pcw-option-inputs
 {
-    width: 100%;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+
+.pcw_button_add_option
+{
+    display: block;
 }

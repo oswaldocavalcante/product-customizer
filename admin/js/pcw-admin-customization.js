@@ -1,40 +1,33 @@
 jQuery(document).ready(function ($) {
     
-    // Adicionar nova camada de personalização
     $('#pwc_button_add_layer').on('click', function () {
         var layerName = $('#pwc_new_option_name').val().trim();
 
         if (layerName === '') {
-            alert('<?php _e("Please enter a name for the layer.", "pcw"); ?>');
+            alert('Please enter a name for the layer.');
             return;
         }
-        
+
         var layerIndex = $('.pcw_layer').length;
 
-        var newLayer = `
-            <div id="pcw_layer_${layerIndex}" class="pcw_layer wc-metabox open">
-                <h3>
-                    <a href="#" class="remove_row delete">Remove</a>
-                    <div class="handlediv" aria-label="Click to toggle"><br></div>
-                    <strong>${layerName}</strong>
-                    <input type="hidden" name="pcw_layer[${layerIndex}]" value="${layerName}" />
-                </h3>
-                <div class="wc-metabox-content">
-                    <a class="pcw_button_add_option button">New option</a>
-                    <div id="pcw_layer_options_${layerIndex}" class="pcw_layer_options"></div>
-                </div>
-            </div>
-        `;
-        
-        $('#pcw_metabox_layers').prepend(newLayer);
+        // Obter o template
+        var template = $('#pcw_layer_template').html();
 
-        // Limpar o campo de entrada após adicionar a nova opção
+        // Substituir os placeholders com os dados reais
+        var newLayer = template
+            .replace(/<%= layerIndex %>/g, layerIndex)
+            .replace(/<%= layerName %>/g, layerName);
+
+        // Inserir o novo conteúdo no DOM
+        $('#pcw_metabox_layers').append(newLayer);
+
+        // Limpar o campo de entrada após adicionar a nova camada
         $('#pwc_new_option_name').val('');
     });
 
     $(document).on('click', '.pcw_button_add_option', function(){
         var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
-        var layerIndex = $('.pcw_layer').length - 1 - $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
+        var layerIndex = $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
         newOption(layerIndex);
     });
 

@@ -93,11 +93,30 @@ class Pcw_Admin
 
 			<div id="pcw-metaboxes" class="wc-metaboxes ui-sortable">
 
-				<!-- Layers -->
-				<div id="pcw_metabox_layers">
-					<!-- <?php include_once PCW_ABSPATH . 'admin/views/templates/metabox-layer.php'; ?> -->
-				</div>
+				<!-- Background -->
+				<div id="pcw-metabox-background" class="wc-metabox closed">
+					<h3>
+						<div class="handlediv" aria-label="Click to toggle"><br></div>
+						<strong><?php esc_html_e('Background', 'pcw'); ?></strong>
+					</h3>
+					<div class="wc-metabox-content hidden">
+						<div class="data">
+							<p class="upload_image">
+								<input type="hidden" class="pcw_upload_image" name="pcw_background" id="pcw_background" />
+								<a class="pcw_button_upload_image button">
+									<?php
+									$background = get_post_meta(get_the_ID(), 'pcw_background', true);
 
+									if ($background) : ?>
+										<img src="<?php echo esc_url($background); ?>" style="max-width: 100px;">
+									<?php else: _e('Upload Image', 'pcw');
+									endif; ?>
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
+				
 				<!-- Colors -->
 				<div id="pcw-metabox-colors" class="wc-metabox closed">
 					<h3>
@@ -124,28 +143,30 @@ class Pcw_Admin
 					</div>
 				</div>
 
-				<!-- Background -->
-				<div id="pcw-metabox-background" class="wc-metabox closed">
-					<h3>
-						<div class="handlediv" aria-label="Click to toggle"><br></div>
-						<strong><?php esc_html_e('Background', 'pcw'); ?></strong>
-					</h3>
-					<div class="wc-metabox-content hidden">
-						<div class="data">
-							<p class="upload_image">
-								<input type="hidden" class="pcw_upload_image" name="pcw_background" id="pcw_background" />
-								<a class="pcw_button_upload_image button">
-									<?php
-									$background = get_post_meta(get_the_ID(), 'pcw_background', true);
+				<!-- Layers -->
+				<div id="pcw_metabox_layers">
+					<?php
+					// update_post_meta(get_the_ID(), 'pcw_layers', array());
+					$template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
+					$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
+					if (!empty($layers) && is_array($layers))
+					{
+						foreach ($layers as $layerIndex => $layer)
+						{
+							// Substituir as variáveis do template pelos valores reais
+							$renderedTemplate = str_replace(
+								array('<%= layerIndex %>', '<%= layerName %>'),
+								array($layerIndex, esc_html($layer['layer'])),
+								file_get_contents($template_path)
+							);
 
-									if ($background) : ?>
-										<img src="<?php echo esc_url($background); ?>" style="max-width: 100px;">
-									<?php else: _e('Upload Image', 'pcw');
-									endif; ?>
-								</a>
-							</p>
-						</div>
-					</div>
+							echo $renderedTemplate;
+						}
+					}
+					?>
+					<script type="text/template" id="pcw_layer_template">
+						<?php include($template_path); ?>
+					</script>
 				</div>
 
 			</div>

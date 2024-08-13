@@ -134,9 +134,9 @@ class Pcw {
 	{
 		$plugin_admin = new Pcw_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_customization_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
-		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_customization_panel')); // Adiciona o conteúdo da aba de personalização
-		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save_customizations')); // Salva os dados da aba de personalização
+		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
+		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
+		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save')); // Salva os dados da aba de personalização
 	}
 
 	/**
@@ -151,7 +151,8 @@ class Pcw {
 		$plugin_public = new Pcw_Public( $this->get_plugin_name(), $this->get_version() );
 
 		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'add_background'), 	5);
-		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'add_options'), 		40);
+		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'add_colors'), 		40);
+		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'add_layers'), 		41);
 		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_script')			);
 	}
 

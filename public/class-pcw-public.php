@@ -64,7 +64,19 @@ class Pcw_Public
 		}
 	}
 
-	public function add_options()
+	public function add_layers()
+	{
+		$customizations = get_post_meta(get_the_ID(), 'pcw_customizations', true);
+		if (!empty($customizations) && is_array($customizations))
+		{
+			foreach ($customizations as $customization)
+			{
+				
+			}
+		}
+	}
+
+	public function add_colors()
 	{
 		$colors = get_post_meta(get_the_ID(), 'pcw_colors', true);
 		if (!empty($colors) && is_array($colors)) {
@@ -80,7 +92,7 @@ class Pcw_Public
 	{
 		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
 		if ($background) {
-?>
+		?>
 			<style>
 				.flex-viewport {
 					background-image: url('<?php echo esc_attr($background); ?>');
@@ -88,7 +100,7 @@ class Pcw_Public
 					background-position: center;
 				}
 			</style>
-<?php
+		<?php	
 		}
 	}
 }

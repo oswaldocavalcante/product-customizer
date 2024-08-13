@@ -1,65 +1,86 @@
 jQuery(document).ready(function ($) {
+    
+    // Adicionar nova camada de personalização
+    $('#pwc_button_add_layer').on('click', function () {
+        var layerName = $('#pwc_new_option_name').val().trim();
+
+        if (layerName === '') {
+            alert('<?php _e("Please enter a name for the layer.", "pcw"); ?>');
+            return;
+        }
+        
+        var layerIndex = $('.pcw_layer').length;
+
+        var newLayer = `
+            <div id="pcw_layer_${layerIndex}" class="pcw_layer wc-metabox open">
+                <h3>
+                    <a href="#" class="remove_row delete"><?php _e('Remove', 'pcw'); ?></a>
+                    <div class="handlediv" aria-label="Click to toggle"><br></div>
+                    <strong>${layerName}</strong>
+                    <input type="hidden" name="pcw_layer[${layerIndex}]" value="${layerName}" />
+                </h3>
+                <div id="pcw_layer_options_${layerIndex}" class="wc-metabox-content hidden">
+                </div>
+                <a class="pcw_button_add_option button">New option</a>
+            </div>
+        `;
+        
+        $('#pcw_metabox_layers').prepend(newLayer);
+
+        // Limpar o campo de entrada após adicionar a nova opção
+        $('#pwc_new_option_name').val('');
+    });
+
+    $(document).on('click', '.pcw_button_add_option', function(){
+        var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
+        var layerIndex = $('.pcw_layer').length - 1 - $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
+        newOption(layerIndex);
+    });
+
+    function newOption(layerIndex){
+        var optionIndex = $(`#pcw_layer_options_${layerIndex}`).children().length;
+        var newOption = `
+            <div id="pcw_option_${optionIndex}" class="pcw-option">
+                <div class="pcw-option-images">
+                    <div class="pcw-option-image">
+                        <label>Front Image</label>
+                        <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[${layerIndex}][]" id="pcw_${layerIndex}_option_image_front_${optionIndex}" />
+                        <a class="pcw_button_upload_image button"><?php _e('Front image', 'pcw'); ?></a>
+                    </div>
+                    <div class="pcw-option-image">
+                        <label>Back Image</label>
+                        <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[${layerIndex}][]" id="pcw_${layerIndex}_option_image_back_${optionIndex}" />
+                        <a class="pcw_button_upload_image button"><?php _e('Back image', 'pcw'); ?></a>
+                    </div>
+                </div>
+                <div class="pcw-option-inputs">
+                    <input type="text" class="option_name" name="pcw_option_name[${layerIndex}][]" id="pcw_${layerIndex}_option_name_${optionIndex}" placeholder="Nome" />
+                    <input type="text" class="option_cost" name="pcw_option_cost[${layerIndex}][]" id="pcw_${layerIndex}_option_cost_${optionIndex}" placeholder="Custo R$" />
+                </div>
+            </div>
+        `;
+
+        $(`#pcw_layer_options_${layerIndex}`).append(newOption);
+    }
 
     $('#pwc_button_add_color').on('click', function () {
-        var colorValue  = $('#pwc_new_color_value').val();
-        var colorName   = $('#pwc_new_color_name').val();
-        var colorIndex  = $('#pwc_color_display').length;
+        var colorValue = $('#pwc_new_color_value').val();
+        var colorName = $('#pwc_new_color_name').val();
+        var colorIndex = $('#pwc_color_display').length;
 
-        if(!colorValue || !colorName) {
+        if (!colorValue || !colorName) {
             alert('Please insert a name and hexadecimal color value.');
             return;
         }
 
-        var newColorOption = `
-            <div class="gcw_color_display" style="background-color:${colorValue}; width: 50px; height: 50px;">
+        var newColor = `
+            <div class="pcw_color_display" style="background-color:${colorValue}; width: 50px; height: 50px;">
                 <input type="text" name="pcw_color_value[]" id="pcw_color_value_${colorIndex}" value="${colorValue}"/>
                 <input type="text" name="pcw_color_name[]" id="pcw_color_name_${colorIndex}" value="${colorName}"/>
             </div>
         `;
 
-        $('#pwc_colors_container').append(newColorOption);
-    });
-    
-    // Adicionar nova opção de personalização
-    $('#pwc_button_add_option').on('click', function () {
-        var optionName = $('#pwc_new_option_name').val().trim();
-
-        if (optionName === '') {
-            alert('<?php _e("Please enter a name for the option.", "pcw"); ?>');
-            return;
-        }
-
-        var customizationIndex = $('#customization_options').length;
-
-        var newOption = `
-            <div class="wc-metabox closed">
-                <h3>
-                    <a href="#" class="remove_row delete"><?php _e('Remove', 'pcw'); ?></a>
-                    <div class="handlediv" aria-label="Click to toggle"><br></div>
-                    <strong>${optionName}</strong>
-                </h3>
-                <div class="wc-metabox-content hidden">
-                    <div class="data">
-                        <p class="upload_image">
-                            <label for="pwc_option_image_${customizationIndex}"><?php _e('Option Image', 'pcw'); ?></label>
-                            <input type="hidden" class="pcw_image" name="pwc_option_image[]" id="pwc_option_image_${customizationIndex}" />
-                            <a class="pcw_button_upload_image button"><?php _e('Upload Image', 'pcw'); ?></a>
-                        </p>
-                        <p class="options_inputs">
-                            <label for="pwc_option_name_${customizationIndex}"><?php _e('Option Name', 'pcw'); ?></label>
-                            <input type="text" class="option_name" name="pwc_option_name[]" id="pwc_option_name_${customizationIndex}" placeholder="Nome" />
-                            <label for="pwc_option_cost_${customizationIndex}"><?php _e('Option Cost', 'pcw'); ?></label>
-                            <input type="text" class="option_name" name="pwc_option_cost[]" id="pwc_option_cost_${customizationIndex}" placeholder="Custo R$" />
-                        </p>
-                        <div class="image_preview"></div>
-                    </div>
-                </div>
-            </div>`;
-
-        $('#customization_options').append(newOption);
-
-        // Limpar o campo de entrada após adicionar a nova opção
-        $('#pwc_new_option_name').val('');
+        $('#pcw-metabox-content-colors').append(newColor);
     });
 
     // Remover opção de personalização
@@ -74,8 +95,7 @@ jQuery(document).ready(function ($) {
         e.preventDefault();
 
         var $button = $(this);
-        var $input = $button.siblings('.pcw_image');
-        var $preview = $button.siblings('.image_preview');
+        var $input = $button.siblings('.pcw_upload_image');
 
         // Cria o media frame
         if (frame) {
@@ -95,7 +115,7 @@ jQuery(document).ready(function ($) {
         frame.on('select', function () {
             var attachment = frame.state().get('selection').first().toJSON();
             $input.val(attachment.url);
-            $preview.html('<img src="' + attachment.url + '" style="max-width: 100px;">');
+            // $preview.html('<img src="' + attachment.url + '" style="max-width: 100px;">');
         });
 
         // Abre o modal de media

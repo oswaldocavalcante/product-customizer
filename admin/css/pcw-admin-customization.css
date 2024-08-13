@@ -1,3 +1,13 @@
+#pcw_metaboxes_wrapper .toolbar-top
+{
+    border-bottom: 1px solid #eee;
+}
+
+.pcw_layer
+{
+    border-bottom: 1px solid #eee;
+}
+
 #pcw_metaboxes_wrapper .expand-close
 {
     float: right;

@@ -3,11 +3,6 @@
     border-bottom: 1px solid #eee;
 }
 
-#pcw_metaboxes_wrapper .pcw_layer
-{
-    border-bottom: 1px solid #eee;
-}
-
 #pcw_metaboxes_wrapper .expand-close
 {
     float: right;
@@ -51,6 +46,7 @@
 {
     content: "\f128";
     font-family: Dashicons;
+    color: #ccc;
     position: absolute;
     top: 0;
     left: 0;

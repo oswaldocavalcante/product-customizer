@@ -9,27 +9,34 @@ jQuery(document).ready(function ($) {
         }
 
         var layerIndex = $('.pcw_layer').length;
-
-        // Obter o template
         var template = $('#pcw_layer_template').html();
-
-        // Substituir os placeholders com os dados reais
         var newLayer = template
             .replace(/<%= layerIndex %>/g, layerIndex)
             .replace(/<%= layerName %>/g, layerName);
 
-        // Inserir o novo conteúdo no DOM
         $('#pcw_metabox_layers').append(newLayer);
-
-        // Limpar o campo de entrada após adicionar a nova camada
         $('#pwc_new_option_name').val('');
     });
 
-    $(document).on('click', '.pcw_button_add_option', function(){
+    $(document).on('click', '.pcw_button_add_option', function () {
         var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
         var layerIndex = $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
-        newOption(layerIndex);
+        var template = $('#pcw_option_template').html();
+        var newOption = template
+            .replace(/<%= layerIndex %>/g, layerIndex)
+            .replace(/<%= imageFront %>/g, '')
+            .replace(/<%= imageBack %>/g, '')
+            .replace(/<%= name %>/g, '')
+            .replace(/<%= cost %>/g, '');
+            
+        $(`#pcw_layer_options_${layerIndex}`).append(newOption);
     });
+
+    // $(document).on('click', '.pcw_button_add_option', function(){
+    //     var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
+    //     var layerIndex = $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
+    //     newOption(layerIndex);
+    // });
 
     function newOption(layerIndex){
         var optionIndex = $(`#pcw_layer_options_${layerIndex}`).children().length;

@@ -116,7 +116,7 @@ class Pcw_Admin
 						</div>
 					</div>
 				</div>
-				
+
 				<!-- Colors -->
 				<div id="pcw-metabox-colors" class="wc-metabox closed">
 					<h3>
@@ -138,7 +138,12 @@ class Pcw_Admin
 							</div>
 						</div>
 						<div id="pcw-metabox-content-colors">
-							<?php include_once PCW_ABSPATH . 'admin/views/templates/metabox-content-colors.php'; ?>
+							<?php
+							$template_path = PCW_ABSPATH . 'admin/views/templates/color.php';
+							?>
+							<script type="text/template" id="pcw_color_template">
+								<?php include($template_path); ?>
+							</script>
 						</div>
 					</div>
 				</div>
@@ -147,25 +152,41 @@ class Pcw_Admin
 				<div id="pcw_metabox_layers">
 					<?php
 					// update_post_meta(get_the_ID(), 'pcw_layers', array());
-					$template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
+					$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
+					$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
+
 					$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
 					if (!empty($layers) && is_array($layers))
 					{
 						foreach ($layers as $layerIndex => $layer)
 						{
-							// Substituir as variáveis do template pelos valores reais
-							$renderedTemplate = str_replace(
-								array('<%= layerIndex %>', '<%= layerName %>'),
-								array($layerIndex, esc_html($layer['layer'])),
-								file_get_contents($template_path)
+							$optionsTemplate = '';
+							$currentOption = '';
+							$layerOptions = $layer['options'];
+							foreach ($layerOptions as $option) {
+								$currentOption = str_replace(
+									array('<%= layerIndex %>', '<%= imageFront %>', '<%= imageBack %>', '<%= name %>', '<%= cost %>'),
+									array($layerIndex, $option['image']['front'], $option['image']['back'], $option['name'], $option['cost']),
+									file_get_contents($option_template_path)
+								);
+								$optionsTemplate .= $currentOption;
+							}
+
+							$layerTemplate = str_replace(
+								array('<%= layerIndex %>', '<%= layerName %>', '<%= layerOptions %>'),
+								array($layerIndex, esc_html($layer['layer']), $optionsTemplate),
+								file_get_contents($layer_template_path)
 							);
 
-							echo $renderedTemplate;
+							echo $layerTemplate;
 						}
 					}
 					?>
 					<script type="text/template" id="pcw_layer_template">
-						<?php include($template_path); ?>
+						<?php include($layer_template_path); ?>
+					</script>
+					<script type="text/template" id="pcw_option_template">
+						<?php include($option_template_path); ?>
 					</script>
 				</div>
 

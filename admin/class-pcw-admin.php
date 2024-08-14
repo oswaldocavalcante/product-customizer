@@ -100,19 +100,15 @@ class Pcw_Admin
 						<strong><?php esc_html_e('Background', 'pcw'); ?></strong>
 					</h3>
 					<div class="wc-metabox-content hidden">
-						<div class="data">
-							<p class="upload_image">
-								<input type="hidden" class="pcw_upload_image" name="pcw_background" id="pcw_background" />
-								<a class="pcw_button_upload_image button">
-									<?php
-									$background = get_post_meta(get_the_ID(), 'pcw_background', true);
-
-									if ($background) : ?>
-										<img src="<?php echo esc_url($background); ?>" style="max-width: 100px;">
-									<?php else: _e('Upload Image', 'pcw');
-									endif; ?>
-								</a>
-							</p>
+						<div class="woocommerce_variable_attributes">
+							<?php $background = get_post_meta(get_the_ID(), 'pcw_background', true); ?>
+							<input type="hidden" class="pcw_upload_image" name="pcw_background" value="<?php echo ($background ? 'remove' : '') ?>" />
+							<a class="pcw_button_upload_image upload_image_button tips <?php echo ($background ? 'remove' : '') ?>">
+								<?php if ($background) : ?>
+									<img src="<?php echo esc_url($background); ?>" id="pcw_background_image" class="pcw_uploaded_image" style="display: block" />
+								<?php else: _e('Upload Image', 'pcw'); ?>
+								<?php endif; ?>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -124,7 +120,7 @@ class Pcw_Admin
 						<strong><?php esc_html_e('Colors', 'pcw'); ?></strong>
 					</h3>
 					<div class="wc-metabox-content hidden">
-						<div class="toolbar">
+						<div class="pcw-metabox-content-toolbar">
 							<div id="message" class="inline notice woocommerce-message is-dismissible" style="display: none;">
 								<p class="help">
 									<span><?php esc_attr_e('Add color options to the product image.', 'pcw'); ?></span>

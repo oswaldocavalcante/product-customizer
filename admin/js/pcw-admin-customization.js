@@ -66,6 +66,13 @@ jQuery(document).ready(function ($) {
         var $button = $(this);
         var $input = $button.siblings('.pcw_upload_image');
 
+        if ($input.val()) {
+            $input.val('');
+            $button.html('');
+            $button.removeClass('remove');
+            return;
+        }
+
         // Cria o media frame
         if (frame) {
             frame.open();
@@ -84,8 +91,8 @@ jQuery(document).ready(function ($) {
         frame.on('select', function () {
             var attachment = frame.state().get('selection').first().toJSON();
             $input.val(attachment.url);
-            console.log($input);
-            // $preview.html('<img src="' + attachment.url + '" style="max-width: 100px;">');
+            $button.html('<img src="' + attachment.url + '" class="pcw_uploaded_image" style="display: block">');
+            $button.addClass('remove');
         });
 
         // Abre o modal de media

@@ -1,6 +1,6 @@
-#pcw_metaboxes_wrapper .toolbar-top
+#pcw-metaboxes
 {
-    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
 }
 
 #pcw_metaboxes_wrapper .expand-close
@@ -14,10 +14,63 @@
     padding: 15px;
 }
 
+.pcw-metabox-content-toolbar
+{
+    margin-bottom: 20px;
+}
+
+a.pcw_button_upload_image.pcw_button_upload_image {
+    float: none;
+    margin: auto;
+}
+
+.pcw_uploaded_image
+{
+    max-width: 100%;
+    vertical-align: middle;
+    background-color: #777;
+}
+
+#pcw-metabox-background .woocommerce_variable_attributes
+{
+    border-top: 0;
+}
+
+#pcw-metabox-background .pcw_button_upload_image
+{
+    width: 300px;
+    height: 300px;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    line-height: 110px;
+    text-align: center;
+}
+
+#pcw-metabox-background .pcw_button_upload_image.upload_image_button::before
+{
+    line-height: 300px;
+    font-size: 100px;
+}
+
+#pcw-metabox-content-colors
+{
+    display: flex;
+    gap: 10px;
+}
+
 .pcw_color_display
 {
-    width: 50px;
+    width: 80px;
     height: 50px;
+    padding: 30px 10px 20px 10px;
+    border-radius: 10px;
+}
+
+.pcw_color_display input
+{
+    width: 100%;
 }
 
 .pcw_layer_options
@@ -44,33 +97,9 @@
 
 .pcw-option-image
 {
-    position: relative;
+    border-top: 0;
     flex: 1;
-}
-
-.pcw-option-image:before
-{
-    content: "\f128";
-    font-family: Dashicons;
-    color: #ccc;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     text-align: center;
-    line-height: 140px;
-    font-size: 60px;
-    -webkit-font-smoothing: antialiased;
-}
-
-#pcw_metabox_layers .pcw_button_upload_image
-{
-    display: block;
-    width: 100%;
-    height: 100px;
-    position: relative;
-    background: none;
 }
 
 .pcw-option-inputs
@@ -79,10 +108,4 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 10px;
-}
-
-
-.pcw_button_add_option
-{
-    display: block;
 }

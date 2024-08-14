@@ -132,26 +132,43 @@ class Pcw_Admin
 								</p>
 							</div>
 							<div class="actions">
-								<input type="text" id="pwc_new_color_value" placeholder="<?php esc_attr_e('Hexadecimal', 'pcw'); ?>: #FF0000" />
-								<input type="text" id="pwc_new_color_name" placeholder="<?php esc_attr_e('Color name', 'pcw'); ?>: Red" />
-								<button type="button" id="pwc_button_add_color" class="button"><?php esc_attr_e('Add color', 'pcw'); ?></button>
+								<input type="text" id="pcw_new_color_value" placeholder="<?php esc_attr_e('Hexadecimal', 'pcw'); ?>: #FF0000" />
+								<input type="text" id="pcw_new_color_name" placeholder="<?php esc_attr_e('Color name', 'pcw'); ?>: Red" />
+								<button type="button" id="pcw_button_add_color" class="button"><?php esc_attr_e('Add color', 'pcw'); ?></button>
 							</div>
 						</div>
 						<div id="pcw-metabox-content-colors">
 							<?php
-							$template_path = PCW_ABSPATH . 'admin/views/templates/color.php';
+
+							$color_template_path = PCW_ABSPATH . 'admin/views/templates/color.php';
+
+							$colors = get_post_meta(get_the_ID(), 'pcw_colors', true);
+							if (!empty($colors) && is_array($colors))
+							{
+								foreach ($colors as $color)
+								{
+									$colorTemplate = str_replace(
+										array('<%= colorName %>', '<%= colorValue %>'),
+										array($color['name'], $color['value']),
+										file_get_contents($color_template_path)
+									);
+
+									echo $colorTemplate;
+								}
+							}
+
 							?>
-							<script type="text/template" id="pcw_color_template">
-								<?php include($template_path); ?>
-							</script>
 						</div>
 					</div>
+					<script type="text/template" id="pcw_color_template">
+						<?php include($color_template_path); ?>
+					</script>
 				</div>
 
 				<!-- Layers -->
 				<div id="pcw_metabox_layers">
 					<?php
-					// update_post_meta(get_the_ID(), 'pcw_layers', array());
+
 					$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
 					$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
 
@@ -163,7 +180,8 @@ class Pcw_Admin
 							$optionsTemplate = '';
 							$currentOption = '';
 							$layerOptions = $layer['options'];
-							foreach ($layerOptions as $option) {
+							foreach ($layerOptions as $option)
+							{
 								$currentOption = str_replace(
 									array('<%= layerIndex %>', '<%= imageFront %>', '<%= imageBack %>', '<%= name %>', '<%= cost %>'),
 									array($layerIndex, $option['image']['front'], $option['image']['back'], $option['name'], $option['cost']),
@@ -181,6 +199,7 @@ class Pcw_Admin
 							echo $layerTemplate;
 						}
 					}
+
 					?>
 					<script type="text/template" id="pcw_layer_template">
 						<?php include($layer_template_path); ?>

@@ -14,6 +14,12 @@
     padding: 15px;
 }
 
+.pcw_color_display
+{
+    width: 50px;
+    height: 50px;
+}
+
 .pcw_layer_options
 {
     display: flex;

@@ -12,74 +12,43 @@ jQuery(document).ready(function ($) {
         var template = $('#pcw_layer_template').html();
         var newLayer = template
             .replace(/<%= layerIndex %>/g, layerIndex)
-            .replace(/<%= layerName %>/g, layerName);
+            .replace(/<%= layerName %>/g, layerName)
+            .replace(/<%= layerOptions %>/g, '')
+        ;
 
         $('#pcw_metabox_layers').append(newLayer);
         $('#pwc_new_option_name').val('');
     });
 
     $(document).on('click', '.pcw_button_add_option', function () {
-        var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
-        var layerIndex = $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
+        var parentMetabox = $(this).closest('.wc-metabox');
+        var layerIndex = $('.pcw_layer').index(parentMetabox);
         var template = $('#pcw_option_template').html();
         var newOption = template
             .replace(/<%= layerIndex %>/g, layerIndex)
             .replace(/<%= imageFront %>/g, '')
             .replace(/<%= imageBack %>/g, '')
             .replace(/<%= name %>/g, '')
-            .replace(/<%= cost %>/g, '');
-            
+            .replace(/<%= cost %>/g, '')
+        ;
+
         $(`#pcw_layer_options_${layerIndex}`).append(newOption);
     });
 
-    // $(document).on('click', '.pcw_button_add_option', function(){
-    //     var parentMetabox = $(this).closest('.wc-metabox'); // Identificar a camada (metabox) onde o botão foi clicado
-    //     var layerIndex = $('.pcw_layer').index(parentMetabox); // Obter o índice da camada
-    //     newOption(layerIndex);
-    // });
-
-    function newOption(layerIndex){
-        var optionIndex = $(`#pcw_layer_options_${layerIndex}`).children().length;
-        var newOption = `
-            <div id="pcw_option_${optionIndex}" class="pcw-option">
-                <div class="pcw-option-images">
-                    <div class="pcw-option-image">
-                        <label>Front Image</label>
-                        <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[${layerIndex}][]" id="pcw_${layerIndex}_option_image_front_${optionIndex}" />
-                        <a class="pcw_button_upload_image button"><?php _e('Front image', 'pcw'); ?></a>
-                    </div>
-                    <div class="pcw-option-image">
-                        <label>Back Image</label>
-                        <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[${layerIndex}][]" id="pcw_${layerIndex}_option_image_back_${optionIndex}" />
-                        <a class="pcw_button_upload_image button"><?php _e('Back image', 'pcw'); ?></a>
-                    </div>
-                </div>
-                <div class="pcw-option-inputs">
-                    <input type="text" class="option_name" name="pcw_option_name[${layerIndex}][]" id="pcw_${layerIndex}_option_name_${optionIndex}" placeholder="Nome" />
-                    <input type="text" class="option_cost" name="pcw_option_cost[${layerIndex}][]" id="pcw_${layerIndex}_option_cost_${optionIndex}" placeholder="Custo R$" />
-                </div>
-            </div>
-        `;
-
-        $(`#pcw_layer_options_${layerIndex}`).append(newOption);
-    }
-
-    $('#pwc_button_add_color').on('click', function () {
-        var colorValue = $('#pwc_new_color_value').val();
-        var colorName = $('#pwc_new_color_name').val();
-        var colorIndex = $('#pwc_color_display').length;
+    $(document).on('click', '#pcw_button_add_color', function () {
+        var colorValue = $('#pcw_new_color_value').val();
+        var colorName = $('#pcw_new_color_name').val();
+        var template = $('#pcw_color_template').html();
 
         if (!colorValue || !colorName) {
             alert('Please insert a name and hexadecimal color value.');
             return;
         }
 
-        var newColor = `
-            <div class="pcw_color_display" style="background-color:${colorValue}; width: 50px; height: 50px;">
-                <input type="text" name="pcw_color_value[]" id="pcw_color_value_${colorIndex}" value="${colorValue}"/>
-                <input type="text" name="pcw_color_name[]" id="pcw_color_name_${colorIndex}" value="${colorName}"/>
-            </div>
-        `;
+        var newColor = template
+            .replace(/<%= colorValue %>/g, colorValue)
+            .replace(/<%= colorName %>/g, colorName)
+        ;
 
         $('#pcw-metabox-content-colors').append(newColor);
     });

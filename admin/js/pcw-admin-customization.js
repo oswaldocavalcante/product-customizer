@@ -32,7 +32,8 @@ jQuery(document).ready(function ($) {
             .replace(/<%= cost %>/g, '')
         ;
 
-        $(`#pcw_layer_options_${layerIndex}`).append(newOption);
+        var layerOptions = $(this).siblings('.pcw_layer_options');
+        layerOptions.append(newOption);
     });
 
     $(document).on('click', '#pcw_button_add_color', function () {
@@ -51,12 +52,6 @@ jQuery(document).ready(function ($) {
         ;
 
         $('#pcw-metabox-content-colors').append(newColor);
-    });
-
-    // Remover opção de personalização
-    $(document).on('click', '.remove_row.delete', function (e) {
-        e.preventDefault();
-        $(this).closest('.woocommerce_variation').remove();
     });
 
     // Ação para carregar imagem
@@ -118,25 +113,76 @@ jQuery(document).ready(function ($) {
         if (confirm('Are you sure you want to delete this option?')) {
             var postId = $('#post_ID').val();
             var $option = $(this).closest('.pcw-option');
-            var optionId = $option.data('option-id'); // Obter o identificador da opção
+            var optionId = $option.data('option-id');
 
-            // Enviar a exclusão para o servidor via AJAX
             $.ajax({
-                url: pcw_ajax_object.url, // URL para o handler AJAX no WordPress
+                url: pcw_ajax_object.url,
                 type: 'POST',
                 data: {
-                    action: 'delete_option', // Nome da ação AJAX
+                    action: 'pcw_delete_option',
                     nonce: pcw_ajax_object.nonce,
                     post_id: postId,
-                    option_id: optionId // ID da opção
+                    option_id: optionId
                 },
                 success: function (response) {
-                    // Sucesso - remover o item do DOM
                     $option.remove();
                 },
                 error: function (xhr, status, error) {
-                    // Tratar erros, se houver
                     alert('Failed to delete option.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.pcw_button_remove_color', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this color?')) {
+            var postId = $('#post_ID').val();
+            var $color = $(this).closest('.pcw_color');
+            var colorId = $color.data('color-id');
+
+            $.ajax({
+                url: pcw_ajax_object.url,
+                type: 'POST',
+                data: {
+                    action: 'pcw_delete_color',
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    color_id: colorId
+                },
+                success: function (response) {
+                    $color.remove();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to delete color.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.pcw_button_remove_layer', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this layer?')) {
+            var postId = $('#post_ID').val();
+            var $layer = $(this).closest('.pcw_layer');
+            var layerId = $layer.data('layer-id');
+
+            $.ajax({
+                url: pcw_ajax_object.url,
+                type: 'POST',
+                data: {
+                    action: 'pcw_delete_layer',
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    layer_id: layerId
+                },
+                success: function (response) {
+                    $layer.remove();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to delete layer.');
                 }
             });
         }

@@ -68,7 +68,7 @@ class Pcw_Admin
 	}
 
 	public function add_panel()
-	{
+	{	
 		wp_enqueue_style('pcw-admin-customization', plugin_dir_url(__FILE__) . 'css/pcw-admin-customization.css', array(), $this->version, 'all');
 		wp_enqueue_script('pcw-admin-customization', plugin_dir_url(__FILE__) . 'js/pcw-admin-customization.js', array('jquery'), $this->version, false);
 		wp_localize_script('pcw-admin-customization', 'pcw_ajax_object', array(
@@ -148,11 +148,10 @@ class Pcw_Admin
 								foreach ($colors as $color)
 								{
 									$colorTemplate = str_replace(
-										array('<%= colorName %>', '<%= colorValue %>'),
-										array($color['name'], $color['value']),
+										array('<%= id %>', '<%= colorName %>', '<%= colorValue %>'),
+										array($color['id'], $color['name'], $color['value']),
 										file_get_contents($color_template_path)
 									);
-
 									echo $colorTemplate;
 								}
 							}
@@ -191,11 +190,10 @@ class Pcw_Admin
 							}
 
 							$layerTemplate = str_replace(
-								array('<%= layerIndex %>', '<%= layerName %>', '<%= layerOptions %>'),
-								array($layerIndex, esc_html($layer['layer']), $optionsTemplate),
+								array('<%= layerIndex %>', '<%= id %>', '<%= layerName %>', '<%= layerOptions %>'),
+								array($layerIndex, $layer['id'], esc_html($layer['layer']), $optionsTemplate),
 								file_get_contents($layer_template_path)
 							);
-
 							echo $layerTemplate;
 						}
 					}
@@ -273,8 +271,9 @@ class Pcw_Admin
 				if (!empty($pcw_options))
 				{
 					$pcw_layers[] = array(
-						'layer' => sanitize_text_field($layer),
-						'options' => $pcw_options
+						'id' 		=> uniqid('option_', true),
+						'layer' 	=> sanitize_text_field($layer),
+						'options' 	=> $pcw_options
 					);
 				}
 
@@ -294,10 +293,11 @@ class Pcw_Admin
 		{
 			$pcw_colors = array();
 
-			foreach ($_POST['pcw_color_name'] as $index => $name)
+			foreach ($_POST['pcw_color_name'] as $index => $color_name)
 			{
 				$pcw_colors[] = array(
-					'name' 	=> sanitize_text_field($name),
+					'id' 	=> uniqid('color_', true),
+					'name' 	=> sanitize_text_field($color_name),
 					'value' => sanitize_text_field($_POST['pcw_color_value'][$index]),
 				);
 			}
@@ -357,13 +357,9 @@ class Pcw_Admin
 						$layer = null; // Remover camada se não houver opções
 					}
 				}
-
 				// Remover camadas vazias
 				$pcw_layers = array_filter($pcw_layers);
-
-				// Salvar as camadas atualizadas
 				update_post_meta($post_id, 'pcw_layers', $pcw_layers);
-
 				wp_send_json_success('Option deleted');
 			}
 			else
@@ -374,6 +370,82 @@ class Pcw_Admin
 		else
 		{
 			wp_send_json_error('No option ID specified');
+		}
+
+		wp_die(); // Termina a execução do script
+	}
+
+	function delete_color_callback()
+	{
+		if (!current_user_can('edit_posts'))
+		{
+			wp_send_json_error('No permission');
+			return;
+		}
+
+		if (isset($_POST['color_id']))
+		{
+			$post_id 	= sanitize_text_field($_POST['post_id']);
+			$color_id 	= sanitize_text_field($_POST['color_id']);
+
+			$pcw_colors = get_post_meta($post_id, 'pcw_colors', true); // Obter as camadas salvas
+			if (!empty($pcw_colors) && is_array($pcw_colors))
+			{
+
+				$new_colors = array_filter($pcw_colors, function ($color) use ($color_id)
+				{
+					return $color['id'] != $color_id;
+				});
+
+				update_post_meta($post_id, 'pcw_colors', $new_colors);
+				wp_send_json_success('Color deleted');
+			}
+			else
+			{
+				wp_send_json_error('No color found');
+			}
+		}
+		else
+		{
+			wp_send_json_error('No color ID specified');
+		}
+
+		wp_die(); // Termina a execução do script
+	}
+
+	function delete_layer_callback()
+	{
+		if (!current_user_can('edit_posts'))
+		{
+			wp_send_json_error('No permission');
+			return;
+		}
+
+		if (isset($_POST['layer_id']))
+		{
+			$post_id 	= sanitize_text_field($_POST['post_id']);
+			$layer_id 	= sanitize_text_field($_POST['layer_id']);
+
+			$pcw_layers = get_post_meta($post_id, 'pcw_layers', true); // Obter as camadas salvas
+			if (!empty($pcw_layers) && is_array($pcw_layers))
+			{
+
+				$new_layers = array_filter($pcw_layers, function ($layer) use ($layer_id)
+				{
+					return $layer['id'] != $layer_id;
+				});
+
+				update_post_meta($post_id, 'pcw_layers', $new_layers);
+				wp_send_json_success('Layer deleted');
+			}
+			else
+			{
+				wp_send_json_error('No layer found');
+			}
+		}
+		else
+		{
+			wp_send_json_error('No layer ID specified');
 		}
 
 		wp_die(); // Termina a execução do script

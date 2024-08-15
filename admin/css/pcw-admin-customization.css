@@ -62,15 +62,18 @@ a.pcw_button_upload_image.pcw_button_upload_image {
     gap: 10px;
 }
 
-.pcw_color_display
+.pcw_color
 {
     width: 80px;
     height: 50px;
     padding: 30px 10px 20px 10px;
+    border: 1px solid #2271b1;
     border-radius: 10px;
+    position: relative;
+    z-index: 1;
 }
 
-.pcw_color_display input
+.pcw_color input
 {
     width: 100%;
 }
@@ -97,6 +100,7 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 
 .pcw-option:hover
 ,#pcw-metabox-background .pcw_button_upload_image:hover
+,.pcw_color:hover
 {
     background: #f0f0f1;
     border-color: #0a4b78;
@@ -104,6 +108,7 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 }
 
 .pcw_remove_option
+,.pcw_remove_color
 {
     width: 100%;
     height: 100%;
@@ -115,11 +120,13 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 }
 
 .pcw_remove_option:hover
+,.pcw_remove_color:hover
 {
     opacity: 100%;
 }
 
 .pcw_button_remove_option
+,.pcw_button_remove_color
 {
     width: 24px;
     height: 24px;
@@ -128,6 +135,7 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 }
 
 .pcw_button_remove_option::before
+,.pcw_button_remove_color::before
 {
     font-family: Dashicons;
     content: '\f335';

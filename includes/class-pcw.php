@@ -138,7 +138,9 @@ class Pcw {
 		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
 		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save')); // Salva os dados da aba de personalização
 		
-		add_action('wp_ajax_delete_option', 			array($plugin_admin, 'delete_option_callback'));
+		add_action('wp_ajax_pcw_delete_option', 		array($plugin_admin, 'delete_option_callback'));
+		add_action('wp_ajax_pcw_delete_color', 			array($plugin_admin, 'delete_color_callback'));
+		add_action('wp_ajax_pcw_delete_layer', 			array($plugin_admin, 'delete_layer_callback'));
 	}
 
 	/**

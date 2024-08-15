@@ -1,6 +1,6 @@
-<div id="pcw_layer_<%= layerIndex %>" class="pcw_layer wc-metabox closed">
+<div id="pcw_layer_<%= layerIndex %>" data-layer-id="<%= id %>" class="pcw_layer wc-metabox closed">
     <h3>
-        <a href="#" class="remove_row delete">Remove</a>
+        <a href="#" class="pcw_button_remove_layer remove_row delete">Remove</a>
         <div class="handlediv" aria-label="Click to toggle"><br></div>
         <strong><%= layerName %></strong>
         <input type="hidden" name="pcw_layer[<%= layerIndex %>]" value="<%= layerName %>" />

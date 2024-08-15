@@ -26,9 +26,9 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 
 .pcw_uploaded_image
 {
-    max-width: 100%;
-    vertical-align: middle;
     background-color: #777;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 #pcw-metabox-background .woocommerce_variable_attributes
@@ -41,11 +41,13 @@ a.pcw_button_upload_image.pcw_button_upload_image {
     width: 300px;
     height: 300px;
     padding: 0;
-    border: 1px solid #ccc;
-    border-radius: 10px;
     overflow: hidden;
     line-height: 110px;
     text-align: center;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 7px;
+    background-color: #f6f7f7;
 }
 
 #pcw-metabox-background .pcw_button_upload_image.upload_image_button::before
@@ -83,10 +85,59 @@ a.pcw_button_upload_image.pcw_button_upload_image {
 
 .pcw-option
 {
-    width: 200px;
-    border: 1px solid #777;
+    width: 180px;
     padding: 15px;
-    border-radius: 10px;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+    border-radius: 7px;
+    background-color: #f6f7f7;
+    position: relative;
+    z-index: 1;
+}
+
+.pcw-option:hover
+,#pcw-metabox-background .pcw_button_upload_image:hover
+{
+    background: #f0f0f1;
+    border-color: #0a4b78;
+    color: #0a4b78;
+}
+
+.pcw_remove_option
+{
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.pcw_remove_option:hover
+{
+    opacity: 100%;
+}
+
+.pcw_button_remove_option
+{
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    cursor: pointer;
+}
+
+.pcw_button_remove_option::before
+{
+    font-family: Dashicons;
+    content: '\f335';
+    font-size: 24px;
+    top: -10px;
+    right: -10px;
+    position: absolute;
+    color: #FFF;
+    background-color: #2271b1;
+    border-radius: 100%;
 }
 
 .pcw-option-images
@@ -100,6 +151,11 @@ a.pcw_button_upload_image.pcw_button_upload_image {
     border-top: 0;
     flex: 1;
     text-align: center;
+}
+
+.pcw-option .woocommerce_variable_attributes
+{
+    background-color: unset;
 }
 
 .pcw-option-inputs

@@ -1,22 +1,25 @@
-<div class="pcw-option">
+<div class="pcw-option" data-option-id="<%= id %>">
     <div class="pcw-option-images">
         <div class="pcw-option-image woocommerce_variable_attributes">
             <label>Front Image</label>
-            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[<%= layerIndex %>][]" value="<%= imageFront %>" />
+            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[<%= layerIndex %>][]" value="<%= imageFront %>" required />
             <a class="pcw_button_upload_image upload_image_button tips">
-                <?php _e('Front image', 'pcw'); ?>
+                <img src="<%= imageFront %>" class="pcw_uploaded_image" />
             </a>
         </div>
         <div class="pcw-option-image woocommerce_variable_attributes">
             <label>Back Image</label>
-            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[<%= layerIndex %>][]" value="<%= imageBack %>" />
+            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[<%= layerIndex %>][]" value="<%= imageBack %>" required />
             <a class="pcw_button_upload_image upload_image_button tips">
-                <?php _e('Back image', 'pcw'); ?>
+                <img src="<%= imageBack %>" class="pcw_uploaded_image" />
             </a>
         </div>
     </div>
     <div class="pcw-option-inputs">
-        <input type="text" class="option_name" name="pcw_option_name[<%= layerIndex %>][]" value="<%= name %>" placeholder="Nome" />
+        <input type="text" class="option_name" name="pcw_option_name[<%= layerIndex %>][]" value="<%= name %>" placeholder="Nome" required />
         <input type="text" class="option_cost" name="pcw_option_cost[<%= layerIndex %>][]" value="<%= cost %>" placeholder="Custo R$" />
+    </div>
+    <div class="pcw_remove_option">
+        <span class="pcw_button_remove_option"></span>
     </div>
 </div>

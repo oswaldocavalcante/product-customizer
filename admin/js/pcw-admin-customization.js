@@ -98,4 +98,47 @@ jQuery(document).ready(function ($) {
         // Abre o modal de media
         frame.open();
     });
+
+    $(document).ready(function () {
+        // Itera por cada input dentro de .pcw-option
+        $('.pcw-option').each(function () {
+            // Para cada input encontrado, verifica se tem valor
+            $(this).find('input').each(function () {
+                if ($(this).val() !== '') {
+                    // Se o input tiver valor, adiciona a classe 'remove' à tag <a> correspondente
+                    $(this).siblings('a').addClass('remove');
+                }
+            });
+        });
+    });
+
+    $(document).on('click', '.pcw_button_remove_option', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this option?')) {
+            var postId = $('#post_ID').val();
+            var $option = $(this).closest('.pcw-option');
+            var optionId = $option.data('option-id'); // Obter o identificador da opção
+
+            // Enviar a exclusão para o servidor via AJAX
+            $.ajax({
+                url: pcw_ajax_object.url, // URL para o handler AJAX no WordPress
+                type: 'POST',
+                data: {
+                    action: 'delete_option', // Nome da ação AJAX
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    option_id: optionId // ID da opção
+                },
+                success: function (response) {
+                    // Sucesso - remover o item do DOM
+                    $option.remove();
+                },
+                error: function (xhr, status, error) {
+                    // Tratar erros, se houver
+                    alert('Failed to delete option.');
+                }
+            });
+        }
+    });
 });

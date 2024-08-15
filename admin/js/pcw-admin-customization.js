@@ -1,6 +1,11 @@
 jQuery(document).ready(function ($) {
+
+    function generateUniqueId() {
+        return Math.random().toString(36);
+    }
     
     $('#pwc_button_add_layer').on('click', function () {
+
         var layerName = $('#pwc_new_option_name').val().trim();
 
         if (layerName === '') {
@@ -8,10 +13,10 @@ jQuery(document).ready(function ($) {
             return;
         }
 
-        var layerIndex = $('.pcw_layer').length;
         var template = $('#pcw_layer_template').html();
+        var layerId = generateUniqueId();
         var newLayer = template
-            .replace(/<%= layerIndex %>/g, layerIndex)
+            .replace(/<%= layerId %>/g, layerId)
             .replace(/<%= layerName %>/g, layerName)
             .replace(/<%= layerOptions %>/g, '')
         ;
@@ -21,11 +26,12 @@ jQuery(document).ready(function ($) {
     });
 
     $(document).on('click', '.pcw_button_add_option', function () {
-        var parentMetabox = $(this).closest('.wc-metabox');
-        var layerIndex = $('.pcw_layer').index(parentMetabox);
+
+        var $layer = $(this).closest('.pcw_layer');
+        var layerId = $layer.data('layer-id');
         var template = $('#pcw_option_template').html();
         var newOption = template
-            .replace(/<%= layerIndex %>/g, layerIndex)
+            .replace(/<%= layerId %>/g, layerId)
             .replace(/<%= imageFront %>/g, '')
             .replace(/<%= imageBack %>/g, '')
             .replace(/<%= name %>/g, '')

@@ -174,7 +174,7 @@ class Pcw_Admin
 					$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
 					if (!empty($layers) && is_array($layers))
 					{
-						foreach ($layers as $layerIndex => $layer)
+						foreach ($layers as $layer)
 						{
 							$optionsTemplate = '';
 							$currentOption = '';
@@ -182,16 +182,16 @@ class Pcw_Admin
 							foreach ($layerOptions as $option)
 							{
 								$currentOption = str_replace(
-									array('<%= layerIndex %>', '<%= id %>', 	'<%= imageFront %>', 		'<%= imageBack %>', 		'<%= name %>', 		'<%= cost %>'),
-									array($layerIndex, 			$option['id'], 	$option['image']['front'], 	$option['image']['back'], 	$option['name'], 	$option['cost']),
+									array('<%= layerId %>', '<%= optionId %>', 	'<%= imageFront %>', 		'<%= imageBack %>', 		'<%= name %>', 		'<%= cost %>'),
+									array($layer['id'], 	$option['id'], 		$option['image']['front'], 	$option['image']['back'], 	$option['name'], 	$option['cost']),
 									file_get_contents($option_template_path)
 								);
 								$optionsTemplate .= $currentOption;
 							}
 
 							$layerTemplate = str_replace(
-								array('<%= layerIndex %>', '<%= id %>', '<%= layerName %>', '<%= layerOptions %>'),
-								array($layerIndex, $layer['id'], esc_html($layer['layer']), $optionsTemplate),
+								array('<%= layerId %>', '<%= layerName %>', 		'<%= layerOptions %>'),
+								array($layer['id'], 	esc_html($layer['layer']), 	$optionsTemplate),
 								file_get_contents($layer_template_path)
 							);
 							echo $layerTemplate;

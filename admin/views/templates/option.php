@@ -1,23 +1,23 @@
-<div class="pcw-option" data-option-id="<%= id %>">
+<div class="pcw-option" data-option-id="<%= optionId %>">
     <div class="pcw-option-images">
         <div class="pcw-option-image woocommerce_variable_attributes">
             <label>Front Image</label>
-            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[<%= layerIndex %>][]" value="<%= imageFront %>" required />
+            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_front[<%= layerId %>][]" value="<%= imageFront %>" required />
             <a class="pcw_button_upload_image upload_image_button tips">
                 <img src="<%= imageFront %>" class="pcw_uploaded_image" />
             </a>
         </div>
         <div class="pcw-option-image woocommerce_variable_attributes">
             <label>Back Image</label>
-            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[<%= layerIndex %>][]" value="<%= imageBack %>" required />
+            <input type="hidden" class="pcw_upload_image" name="pcw_option_image_back[<%= layerId %>][]" value="<%= imageBack %>" required />
             <a class="pcw_button_upload_image upload_image_button tips">
                 <img src="<%= imageBack %>" class="pcw_uploaded_image" />
             </a>
         </div>
     </div>
     <div class="pcw-option-inputs">
-        <input type="text" class="option_name" name="pcw_option_name[<%= layerIndex %>][]" value="<%= name %>" placeholder="Nome" required />
-        <input type="text" class="option_cost" name="pcw_option_cost[<%= layerIndex %>][]" value="<%= cost %>" placeholder="Custo R$" />
+        <input type="text" class="option_name" name="pcw_option_name[<%= layerId %>][]" value="<%= name %>" placeholder="Nome" required />
+        <input type="text" class="option_cost" name="pcw_option_cost[<%= layerId %>][]" value="<%= cost %>" placeholder="Custo R$" />
     </div>
     <div class="pcw_remove_option">
         <span class="pcw_button_remove_option"></span>

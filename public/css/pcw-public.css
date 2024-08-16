@@ -1,3 +1,10 @@
+#pcw_color_container
+{
+    width: 100%;
+    display: inline-flex;
+    gap: 4px;
+}
+
 .pcw_color
 {
     width: 35px;
@@ -5,5 +12,68 @@
     border-radius: 100%;
     border: 2px solid #ccc;
     cursor: pointer;
-    margin-right: 4px;
+}
+
+ul#pcw_layers_menu
+{
+    width: 100%;
+    margin: 20px 0 -1px 10px;
+    list-style: none;
+    display: inline-flex;
+}
+
+.pcw_layer_menu_item
+{
+    padding: 5px 15px;
+    cursor: pointer;
+    color: dimgray;
+    font-weight: 500;
+}
+
+.pcw_layer_menu_item.active
+{
+    background-color: #eee;
+    border-radius: 10px 10px 0 0;
+    color: #383838;
+}
+
+#pcw_layers_container
+{
+    background-color: #eee;
+    padding: 15px;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.pcw_layer
+{
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pcw_option
+{
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    transition: 0.3s ease-out;
+}
+
+.pcw_option:hover
+{
+    border-color: #aaa;
+}
+
+.pcw_option p
+{
+    font-size: 0.9em;
+    margin: 0;
+    color: dimgray;
 }

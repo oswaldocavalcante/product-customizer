@@ -56,7 +56,6 @@ class Pcw_Admin
 
 	function add_tab($tabs)
 	{
-		// Insert the new tab before the "Advanced" tab
 		$tabs['customization'] = array(
 			'label'    => __('Customizations', 'pcw'),
 			'target'   => 'pcw_metaboxes_wrapper',
@@ -69,9 +68,9 @@ class Pcw_Admin
 
 	public function add_panel()
 	{	
-		wp_enqueue_style('pcw-admin-customization', plugin_dir_url(__FILE__) . 'css/pcw-admin-customization.css', array(), $this->version, 'all');
-		wp_enqueue_script('pcw-admin-customization', plugin_dir_url(__FILE__) . 'js/pcw-admin-customization.js', array('jquery'), $this->version, false);
-		wp_localize_script('pcw-admin-customization', 'pcw_ajax_object', array(
+		wp_enqueue_style('pcw-admin', plugin_dir_url(__FILE__) . 'css/pcw-admin.css', array(), $this->version, 'all');
+		wp_enqueue_script('pcw-admin', plugin_dir_url(__FILE__) . 'js/pcw-admin.js', array('jquery'), $this->version, false);
+		wp_localize_script('pcw-admin', 'pcw_ajax_object', array(
 			'url'   => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('pcw_nonce'),
 		));
@@ -168,12 +167,12 @@ class Pcw_Admin
 				<div id="pcw_metabox_layers">
 					<?php
 
-					$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
-					$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
-
 					$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
 					if (!empty($layers) && is_array($layers))
 					{
+						$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
+						$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
+						
 						foreach ($layers as $layer)
 						{
 							$optionsTemplate = '';
@@ -225,19 +224,16 @@ class Pcw_Admin
 			return;
 		}
 
-		// Verifica as permissões do usuário
 		if (!current_user_can('edit_post', $post_id))
 		{
 			return;
 		}
 
-		// Verifica o tipo de post
 		if ('product' !== get_post_type($post_id))
 		{
 			return;
 		}
 
-		// Verifica se a aba Customization foi preenchida
 		if (isset($_POST['pcw_layer']))
 		{
 			$pcw_layers = array();
@@ -448,6 +444,6 @@ class Pcw_Admin
 			wp_send_json_error('No layer ID specified');
 		}
 
-		wp_die(); // Termina a execução do script
+		wp_die();
 	}
 }

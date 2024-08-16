@@ -17,16 +17,22 @@ jQuery(document).ready(function ($) {
 	});
 
 	function render(productImage, hexColor, view) {
-		var width = productImage.css('width');
-		var height = productImage.css('height');
-		var imageURL = productImage.find('a').attr('href');
+		var width 		= productImage.css('width');
+		var height 		= productImage.css('height');
+		var imageURL 	= productImage.find('a').attr('href');
 
 		// Verifica se já existe um canvas
 		var existingCanvas = productImage.find(`#canvas_${view}`);
 
 		// Cria um novo canvas se não existir
 		if (existingCanvas.length === 0) {
-			productImage.html(`<canvas id="canvas_${view}" width="${width}" height="${height}"><a href="${imageURL}"></a></canvas>`);
+			productImage.html(`
+				<div id="container_canvas_${view}">
+					<canvas id="canvas_${view}" width="${width}" height="${height}">
+						<a href="${imageURL}"></a>
+					</canvas>
+				</div>
+			`);
 			existingCanvas = productImage.find(`#canvas_${view}`);
 		}
 
@@ -97,4 +103,26 @@ jQuery(document).ready(function ($) {
 		const b = bigint & 255;
 		return { r, g, b };
 	}
+
+	$('.pcw_layer').hide();
+
+	var $firstMenuItem = $('.pcw_layer_menu_item').first();
+	$firstMenuItem.addClass('active');
+	
+	var firstLayerId = $firstMenuItem.data('layer-id');
+	$('.pcw_layer[data-layer-id="' + firstLayerId + '"]').show();
+
+	$(document).on('click', '.pcw_layer_menu_item', function() {
+		$('.pcw_layer_menu_item').removeClass('active');
+		$(this).addClass('active');
+		$('.pcw_layer').hide();
+
+		var layerId = $(this).data('layer-id');
+		$('.pcw_layer[data-layer-id="' + layerId + '"]').fadeToggle();
+	});
+
+	$(document).on('click', '.pcw_option', function() {
+		var optionId = $(this).data('option-id');
+		console.log(optionId);
+	});
 });

@@ -77,3 +77,14 @@ ul#pcw_layers_menu
     margin: 0;
     color: dimgray;
 }
+
+#container_canvas_front
+,#container_canvas_back
+{
+    position: relative;
+}
+
+.pcw_image
+{
+    position: absolute;
+}

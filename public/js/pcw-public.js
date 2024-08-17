@@ -123,6 +123,13 @@ jQuery(document).ready(function ($) {
 
 	$(document).on('click', '.pcw_option', function() {
 		var optionId = $(this).data('option-id');
-		console.log(optionId);
+		var optionImageFront = $('.pcw_image_front[image-front-id="' + optionId + '"]');
+		var optionImageBack = $('.pcw_image_back[image-back-id="' + optionId + '"]');
+
+		$('#container_canvas_front').prepend(optionImageFront);
+		$('#container_canvas_back').prepend(optionImageBack);
+
+		optionImageFront.fadeToggle();
+		optionImageBack.fadeToggle();
 	});
 });

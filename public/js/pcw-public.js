@@ -1,42 +1,33 @@
-jQuery(document).ready(function ($) {
-	var productImages = $('.woocommerce-product-gallery__wrapper').children();
+jQuery(document).ready(function ($)
+{
+	var productWrapperFront = $('.woocommerce-product-gallery__wrapper').children().eq(0);
+	var productWrapperBack = $('.woocommerce-product-gallery__wrapper').children().eq(1);
 
-	$(document).on('click', '.pcw_color', function () {
-		var backgroundColor = $(this).css('background-color');
-		var hexColor = rgbToHex(backgroundColor);
+	setCanvas(productWrapperFront, 'front');
+	setTimeout(() => setCanvas(productWrapperBack, 'back'), 100); // Timeout due to WooCommerce script processing for second image
 
-		var productFront = productImages.eq(0);
-		if (productFront.length) {
-			render(productFront, hexColor, 'front');
-		}
+	function setCanvas(productWrapper, view)
+	{
+		productWrapper.prepend(`
+			<div id="canvas_container_${view}">
+				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
+			</div>
+		`);
+		render(document.getElementById(`canvas_${view}`));
+		productWrapper.find('a').hide(); // hide original product image
+	}
 
-		var productBack = productImages.eq(1);
-		if (productBack.length) {
-			render(productBack, hexColor, 'back');
-		}
+	$(document).on('click', '.pcw_color', function ()
+	{
+		var hexColor = rgbToHex($(this).css('background-color'));
+		
+		render(document.getElementById('canvas_front'), hexColor);
+		render(document.getElementById('canvas_back'), hexColor);
 	});
 
-	function render(productImage, hexColor, view) {
-		var width 		= productImage.css('width');
-		var height 		= productImage.css('height');
-		var imageURL 	= productImage.find('a').attr('href');
-
-		// Verifica se já existe um canvas
-		var existingCanvas = productImage.find(`#canvas_${view}`);
-
-		// Cria um novo canvas se não existir
-		if (existingCanvas.length === 0) {
-			productImage.html(`
-				<div id="container_canvas_${view}">
-					<canvas id="canvas_${view}" width="${width}" height="${height}">
-						<a href="${imageURL}"></a>
-					</canvas>
-				</div>
-			`);
-			existingCanvas = productImage.find(`#canvas_${view}`);
-		}
-
-		const canvas = existingCanvas[0];
+	function render(canvas, hexColor = '#FFFFFF')
+	{
+		imageURL = $(canvas).attr('data-image-url');
 		const ctx = canvas.getContext('2d');
 
 		const img = new Image();
@@ -82,7 +73,8 @@ jQuery(document).ready(function ($) {
 		};
 	}
 
-	function rgbToHex(rgb) {
+	function rgbToHex(rgb)
+	{
 		let result = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
 		return result
 			? "#" +
@@ -92,7 +84,8 @@ jQuery(document).ready(function ($) {
 			: rgb;
 	}
 
-	function hexToRgb(hex) {
+	function hexToRgb(hex) 
+	{
 		hex = hex.replace(/^#/, '');
 		if (hex.length === 3) {
 			hex = hex.split('').map(char => char + char).join('');
@@ -103,16 +96,16 @@ jQuery(document).ready(function ($) {
 		const b = bigint & 255;
 		return { r, g, b };
 	}
-
-	$('.pcw_layer').hide();
-
+	
 	var $firstMenuItem = $('.pcw_layer_menu_item').first();
 	$firstMenuItem.addClass('active');
 	
+	$('.pcw_layer').hide();
 	var firstLayerId = $firstMenuItem.data('layer-id');
 	$('.pcw_layer[data-layer-id="' + firstLayerId + '"]').show();
 
-	$(document).on('click', '.pcw_layer_menu_item', function() {
+	$(document).on('click', '.pcw_layer_menu_item', function()
+	{
 		$('.pcw_layer_menu_item').removeClass('active');
 		$(this).addClass('active');
 		$('.pcw_layer').hide();
@@ -121,15 +114,26 @@ jQuery(document).ready(function ($) {
 		$('.pcw_layer[data-layer-id="' + layerId + '"]').fadeToggle();
 	});
 
-	$(document).on('click', '.pcw_option', function() {
+	$(document).on('click', '.pcw_option', function()
+	{
 		var optionId = $(this).data('option-id');
-		var optionImageFront = $('.pcw_image_front[image-front-id="' + optionId + '"]');
-		var optionImageBack = $('.pcw_image_back[image-back-id="' + optionId + '"]');
 
-		$('#container_canvas_front').prepend(optionImageFront);
-		$('#container_canvas_back').prepend(optionImageBack);
+		var optionCanvasFront = $('.pcw_image_front[image-front-id="' + optionId + '"]');
+		var optionCanvasBack = $('.pcw_image_back[image-back-id="' + optionId + '"]');
 
-		optionImageFront.fadeToggle();
-		optionImageBack.fadeToggle();
+		optionCanvasFront.attr('width', productWrapperFront.width());
+		optionCanvasFront.attr('height', productWrapperFront.height());
+
+		optionCanvasBack.attr('width', productWrapperBack.width());
+		optionCanvasBack.attr('height', productWrapperBack.height());
+
+		$('#canvas_container_front').prepend(optionCanvasFront);
+		$('#canvas_container_back').prepend(optionCanvasBack);
+
+		render(optionCanvasFront[0], '#FF0000');
+		render(optionCanvasBack[0], '#FF0000');
+
+		optionCanvasFront.fadeToggle();
+		optionCanvasBack.fadeToggle();
 	});
 });

@@ -1,4 +1,5 @@
 <div class="pcw-option" data-option-id="<%= optionId %>">
+    <input type="hidden" name="pcw_option[<%= layerId %>][]" value="<%= optionId %>" />
     <div class="pcw-option-images">
         <div class="pcw-option-image woocommerce_variable_attributes">
             <label>Front Image</label>
@@ -18,6 +19,10 @@
     <div class="pcw-option-inputs">
         <input type="text" class="option_name" name="pcw_option_name[<%= layerId %>][]" value="<%= name %>" placeholder="Nome" required />
         <input type="text" class="option_cost" name="pcw_option_cost[<%= layerId %>][]" value="<%= cost %>" placeholder="Custo R$" />
+    </div>
+    <div class="pcw-option-colors">
+        <%= optionColors %>
+        <a class="pcw_button_add_option_color button">+</a>
     </div>
     <div class="pcw_remove_option">
         <span class="pcw_button_remove_option"></span>

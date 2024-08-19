@@ -3,6 +3,24 @@ jQuery(document).ready(function ($) {
     function generateUniqueId() {
         return Math.random().toString(36);
     }
+
+    $(document).on('click', '#pcw_button_add_color', function () {
+        var colorValue = $('#pcw_new_color_value').val();
+        var colorName = $('#pcw_new_color_name').val();
+        var template = $('#pcw_color_template').html();
+
+        if (!colorValue || !colorName) {
+            alert('Please insert a name and hexadecimal color value.');
+            return;
+        }
+
+        var newColor = template
+            .replace(/<%= colorValue %>/g, colorValue)
+            .replace(/<%= colorName %>/g, colorName)
+            ;
+
+        $('#pcw-metabox-content-colors').append(newColor);
+    });
     
     $('#pwc_button_add_layer').on('click', function () {
 
@@ -25,39 +43,37 @@ jQuery(document).ready(function ($) {
         $('#pwc_new_option_name').val('');
     });
 
-    $(document).on('click', '.pcw_button_add_option', function () {
-
-        var $layer = $(this).closest('.pcw_layer');
-        var layerId = $layer.data('layer-id');
+    $(document).on('click', '.pcw_button_add_option', function ()
+    {
+        var layerId = $(this).closest('.pcw_layer').data('layer-id');
         var template = $('#pcw_option_template').html();
         var newOption = template
             .replace(/<%= layerId %>/g, layerId)
+            .replace(/<%= optionId %>/g, generateUniqueId())
             .replace(/<%= imageFront %>/g, '')
             .replace(/<%= imageBack %>/g, '')
             .replace(/<%= name %>/g, '')
             .replace(/<%= cost %>/g, '')
+            .replace(/<%= optionColors %>/g, '')
         ;
 
         var layerOptions = $(this).siblings('.pcw_layer_options');
         layerOptions.append(newOption);
     });
 
-    $(document).on('click', '#pcw_button_add_color', function () {
-        var colorValue = $('#pcw_new_color_value').val();
-        var colorName = $('#pcw_new_color_name').val();
-        var template = $('#pcw_color_template').html();
-
-        if (!colorValue || !colorName) {
-            alert('Please insert a name and hexadecimal color value.');
-            return;
-        }
-
-        var newColor = template
-            .replace(/<%= colorValue %>/g, colorValue)
-            .replace(/<%= colorName %>/g, colorName)
+    $(document).on('click', '.pcw_button_add_option_color', function()
+    {
+        var optionId = $(this).closest('.pcw-option').data('option-id');
+        var template = $('#pcw_option_color_template').html();
+        var newOptionColor = template
+            .replace(/<%= optionId %>/g, optionId)
+            .replace(/<%= optionColorId %>/g, generateUniqueId())
+            .replace(/<%= optionColorValue %>/g, '')
+            .replace(/<%= optionColorName %>/g, '')
         ;
 
-        $('#pcw-metabox-content-colors').append(newColor);
+        var optionColors = $(this).closest('.pcw-option-colors');
+        optionColors.append(newOptionColor);
     });
 
     // Ação para carregar imagem

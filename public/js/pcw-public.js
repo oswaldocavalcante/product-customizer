@@ -116,6 +116,9 @@ jQuery(document).ready(function ($)
 
 	$(document).on('click', '.pcw_option', function()
 	{
+		$('.pcw_option').removeClass('active');
+		$(this).addClass('active');
+
 		var optionId = $(this).data('option-id');
 
 		var optionCanvasFront = $('.pcw_image_front[image-front-id="' + optionId + '"]');

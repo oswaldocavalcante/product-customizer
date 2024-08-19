@@ -67,7 +67,7 @@ class Pcw_Admin
 	}
 
 	public function add_panel()
-	{	
+	{
 		wp_enqueue_style('pcw-admin', plugin_dir_url(__FILE__) . 'css/pcw-admin.css', array(), $this->version, 'all');
 		wp_enqueue_script('pcw-admin', plugin_dir_url(__FILE__) . 'js/pcw-admin.js', array('jquery'), $this->version, false);
 		wp_localize_script('pcw-admin', 'pcw_ajax_object', array(
@@ -75,7 +75,7 @@ class Pcw_Admin
 			'nonce' => wp_create_nonce('pcw_nonce'),
 		));
 
-		?>
+?>
 		<div id="pcw_metaboxes_wrapper" class="panel wc-metaboxes-wrapper">
 
 			<div class="toolbar toolbar-top">
@@ -167,25 +167,34 @@ class Pcw_Admin
 				<div id="pcw_metabox_layers">
 					<?php
 
+					$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
+					$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
+					$option_color_template_path = PCW_ABSPATH . 'admin/views/templates/option-color.php';
+
 					$layers = get_post_meta(get_the_ID(), 'pcw_layers', true);
 					if (!empty($layers) && is_array($layers))
 					{
-						$option_template_path = PCW_ABSPATH . 'admin/views/templates/option.php';
-						$layer_template_path = PCW_ABSPATH . 'admin/views/templates/layer.php';
-						
+
 						foreach ($layers as $layer)
 						{
 							$optionsTemplate = '';
-							$currentOption = '';
-							$layerOptions = $layer['options'];
-							foreach ($layerOptions as $option)
+							foreach ($layer['options'] as $option)
 							{
-								$currentOption = str_replace(
-									array('<%= layerId %>', '<%= optionId %>', 	'<%= imageFront %>', 		'<%= imageBack %>', 		'<%= name %>', 		'<%= cost %>'),
-									array($layer['id'], 	$option['id'], 		$option['image']['front'], 	$option['image']['back'], 	$option['name'], 	$option['cost']),
+								$optionColors = '';
+								foreach ($option['colors'] as $color)
+								{
+									$optionColors .= str_replace(
+										array('<%= optionId %>', 	'<%= optionColorId %>', 	'<%= optionColorName %>', 	'<%= optionColorValue %>'),
+										array($option['id'], 		$color['id'], 				$color['name'], 			$color['value']),
+										file_get_contents($option_color_template_path)
+									);
+								}
+
+								$optionsTemplate .= str_replace(
+									array('<%= layerId %>', '<%= optionId %>', 	'<%= imageFront %>', 			'<%= imageBack %>', 		'<%= name %>', 		'<%= cost %>', 		'<%= optionColors %>'),
+									array($layer['id'], 	$option['id'], 		$option['images']['front'], 	$option['images']['back'], 	$option['name'], 	$option['cost'], 	$optionColors),
 									file_get_contents($option_template_path)
 								);
-								$optionsTemplate .= $currentOption;
 							}
 
 							$layerTemplate = str_replace(
@@ -204,6 +213,9 @@ class Pcw_Admin
 					<script type="text/template" id="pcw_option_template">
 						<?php include($option_template_path); ?>
 					</script>
+					<script type="text/template" id="pcw_option_color_template">
+						<?php include($option_color_template_path); ?>
+					</script>
 				</div>
 
 			</div>
@@ -213,7 +225,7 @@ class Pcw_Admin
 			</div>
 
 		</div>
-		<?php
+<?php
 	}
 
 	public function save($post_id)
@@ -237,29 +249,46 @@ class Pcw_Admin
 		if (isset($_POST['pcw_layer']))
 		{
 			$pcw_layers = array();
-			
-			foreach ($_POST['pcw_layer'] as $index_l => $layer)
+
+			foreach ($_POST['pcw_layer'] as $index_layer => $layer)
 			{
 				$pcw_options = array();
 
-				foreach ($_POST['pcw_option_name'][$index_l] as $index => $option_name)
+				foreach ($_POST['pcw_option'][$index_layer] as $index_option => $option_id)
 				{
-					$option_id = uniqid('option_', true);
-					$option_cost = $_POST['pcw_option_cost'][$index_l][$index];
-					$option_image_front = $_POST['pcw_option_image_front'][$index_l][$index];
-					$option_image_back = $_POST['pcw_option_image_back'][$index_l][$index];
+					$pcw_option_colors = array();
 
-					// Verifica se os campos principais não estão vazios antes de salvar
-					if (!empty($option_name) || !empty($option_image_front) || !empty($option_image_back))
+					foreach($_POST['pcw_option_color'][$option_id] as $index_option_color => $option_color_id)
+					{
+						$option_color_name = $_POST['pcw_option_color_name'][$option_id][$index_option_color];
+						$option_color_value = $_POST['pcw_option_color_value'][$option_id][$index_option_color];
+
+						if(!empty($option_color_value))
+						{
+							$pcw_option_colors[] = array(
+								'id' => uniqid('option_color_', true),
+								'name' => sanitize_text_field($option_color_name),
+								'value' => sanitize_text_field($option_color_value)
+							);
+						}
+					}
+
+					$option_name = $_POST['pcw_option_name'][$index_layer][$index_option];
+					$option_cost = $_POST['pcw_option_cost'][$index_layer][$index_option];
+					$option_image_front = $_POST['pcw_option_image_front'][$index_layer][$index_option];
+					$option_image_back = $_POST['pcw_option_image_back'][$index_layer][$index_option];
+
+					if (!empty($option_name) || !empty($option_image_front) || !empty($option_image_back)) // Verifica se os campos principais não estão vazios antes de salvar
 					{
 						$pcw_options[] = array(
-							'id' 	=> $option_id,
+							'id' 	=> uniqid('option_', true),
 							'name'  => sanitize_text_field($option_name),
 							'cost'  => is_numeric($option_cost) ? $option_cost : 0,
-							'image' => array(
+							'images' => array(
 								'front' => sanitize_text_field($option_image_front),
 								'back'  => sanitize_text_field($option_image_back),
-							)
+							),
+							'colors' => $pcw_option_colors,
 						);
 					}
 				}
@@ -267,12 +296,11 @@ class Pcw_Admin
 				if (!empty($pcw_options))
 				{
 					$pcw_layers[] = array(
-						'id' 		=> uniqid('option_', true),
+						'id' 		=> uniqid('layer_', true),
 						'layer' 	=> sanitize_text_field($layer),
 						'options' 	=> $pcw_options
 					);
 				}
-
 			}
 
 			if (!empty($pcw_layers))
@@ -315,7 +343,8 @@ class Pcw_Admin
 
 			// Salva o background como meta dados
 			$old_background = get_post_meta($post_id, 'pcw_background', true);
-			if ($old_background !== $pcw_background) {
+			if ($old_background !== $pcw_background)
+			{
 				update_post_meta($post_id, 'pcw_background', $pcw_background);
 			}
 		}
@@ -346,15 +375,7 @@ class Pcw_Admin
 					{
 						return $option['id'] != $option_id;
 					});
-
-					// Verifique se a camada ainda possui opções
-					if (empty($layer['options']))
-					{
-						$layer = null; // Remover camada se não houver opções
-					}
 				}
-				// Remover camadas vazias
-				$pcw_layers = array_filter($pcw_layers);
 				update_post_meta($post_id, 'pcw_layers', $pcw_layers);
 				wp_send_json_success('Option deleted');
 			}

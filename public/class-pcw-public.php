@@ -80,7 +80,7 @@ class Pcw_Public
 			$colors_html = '<a class="pcw_color" style="background-color:#FFFFFF"></a>';
 			foreach ($colors as $color)
 			{
-				$colors_html .= sprintf('<a class="pcw_color" style="background-color:%s"></a>', $color['value']);
+				$colors_html .= sprintf('<a class="pcw_color" title="%s" style="background-color:%s"></a>', $color['name'], $color['value']);
 			}
 			echo '<div id="pcw_color_container">' . $colors_html . '</div>';
 		}
@@ -100,15 +100,20 @@ class Pcw_Public
 				$layers_menu_items .= sprintf('<li class="pcw_layer_menu_item" data-layer-id="%s">%s</li>', $layer_data['id'], $layer_data['layer']);
 
 				$options_html = '';
-				$options_data = $layer_data['options'];
-				foreach($options_data as $option_data)
+				foreach($layer_data['options'] as $option_data)
 				{
-					$currentOption = str_replace(
-						array('<%= optionId %>',	'<%= optionName %>', 	'<%= optionCost %>', 	'<%= optionColors %>', '<%= imageFront %>', 				'<%= imageBack %>'),
-						array($option_data['id'], 	$option_data['name'], 	$option_data['cost'], 	'', 					$option_data['image']['front'], 	$option_data['image']['back']),
+
+					$option_colors_html = '';
+					foreach($option_data['colors'] as $color_data)
+					{
+						$option_colors_html .= sprintf('<span class="pcw_option_color" title="%s" style="background-color: %s"></span>', $color_data['name'], $color_data['value']);
+					}
+
+					$options_html .= str_replace(
+						array('<%= optionId %>',	'<%= optionName %>', 	'<%= optionCost %>', 	'<%= optionColors %>', 	'<%= imageFront %>', 				'<%= imageBack %>'),
+						array($option_data['id'], 	$option_data['name'], 	$option_data['cost'], 	$option_colors_html, 	$option_data['images']['front'], 	$option_data['images']['back']),
 						file_get_contents($option_template_path)
 					);
-					$options_html .= $currentOption;
 				}
 
 				$layers_html .= sprintf('<div class="pcw_layer" data-layer-id="%s">%s</div>', $layer_data['id'], $options_html);

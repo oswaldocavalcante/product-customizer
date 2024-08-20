@@ -62,7 +62,6 @@ ul#pcw_layers_menu
     flex-direction: column;
     gap: 5px;
     background-color: #fff;
-    cursor: pointer;
     transition: 0.3s ease-out;
 }
 
@@ -76,6 +75,23 @@ ul#pcw_layers_menu
     font-size: 0.9em;
     margin: 0;
     color: dimgray;
+}
+
+.pcw_option_colors
+{
+    display: flex;
+    gap: 3px;
+}
+
+.pcw_option_color
+{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    padding: 2px;
+    box-shadow: 0px 0px 2px #383838;
 }
 
 #canvas_container_front

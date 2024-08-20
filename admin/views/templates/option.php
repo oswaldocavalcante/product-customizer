@@ -21,8 +21,8 @@
         <input type="text" class="option_cost" name="pcw_option_cost[<%= layerId %>][]" value="<%= cost %>" placeholder="Custo R$" />
     </div>
     <div class="pcw-option-colors">
-        <%= optionColors %>
         <a class="pcw_button_add_option_color button">+</a>
+        <%= optionColors %>
     </div>
     <div class="pcw_remove_option">
         <span class="pcw_button_remove_option"></span>

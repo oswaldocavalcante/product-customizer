@@ -114,12 +114,16 @@ jQuery(document).ready(function ($)
 		$('.pcw_layer[data-layer-id="' + layerId + '"]').fadeToggle();
 	});
 
-	$(document).on('click', '.pcw_option', function()
+	$(document).on('click', '.pcw_option_color', function()
 	{
 		$('.pcw_option').removeClass('active');
-		$(this).addClass('active');
+		var $option = $(this).closest('.pcw_option');
+		$option.addClass('active');
 
-		var optionId = $(this).data('option-id');
+
+
+		var optionId = $option.data('option-id');
+		var colorHex = rgbToHex($(this).css('background-color'));
 
 		var optionCanvasFront = $('.pcw_image_front[image-front-id="' + optionId + '"]');
 		var optionCanvasBack = $('.pcw_image_back[image-back-id="' + optionId + '"]');
@@ -133,10 +137,19 @@ jQuery(document).ready(function ($)
 		$('#canvas_container_front').prepend(optionCanvasFront);
 		$('#canvas_container_back').prepend(optionCanvasBack);
 
-		render(optionCanvasFront[0], '#FF0000');
-		render(optionCanvasBack[0], '#FF0000');
+		render(optionCanvasFront[0], colorHex);
+		render(optionCanvasBack[0], colorHex);
 
-		optionCanvasFront.fadeToggle();
-		optionCanvasBack.fadeToggle();
+		if($(this).hasClass('active')) {
+			$(this).removeClass('active');
+			optionCanvasFront.fadeOut();
+			optionCanvasBack.fadeOut();
+		} else {
+			$('.pcw_option_color').removeClass('active');
+			$(this).addClass('active');
+			optionCanvasFront.fadeIn();
+			optionCanvasBack.fadeIn();
+		}
+		
 	});
 });

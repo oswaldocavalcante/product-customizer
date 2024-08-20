@@ -56,7 +56,7 @@ ul#pcw_layers_menu
 .pcw_option
 {
     padding: 10px 15px;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd;
     border-radius: 7px;
     display: flex;
     flex-direction: column;

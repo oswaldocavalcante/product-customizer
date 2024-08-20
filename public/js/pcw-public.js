@@ -8,7 +8,15 @@ jQuery(document).ready(function ($)
 
 	function setCanvas(productWrapper, view)
 	{
-		productWrapper.prepend(`
+		productWrapper.html(`
+			<div id="pcw_logo_container_${view}" class="logo-wrapper" style="display: none">
+				<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
+				<div class="control-icons">
+					<div class="pcw_icon move-icon"></div>
+					<div class="pcw_icon resize-icon"></div>
+					<div class="pcw_icon delete-icon"></div>
+				</div>
+			</div>
 			<div id="canvas_container_${view}">
 				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
 			</div>
@@ -150,6 +158,133 @@ jQuery(document).ready(function ($)
 			optionCanvasFront.fadeIn();
 			optionCanvasBack.fadeIn();
 		}
-		
+	});
+
+	// Quando uma logo é selecionada
+	$('#pcw_button_logo_upload').on('change', function (event) {
+		var file = event.target.files[0];
+		if (file) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var img = new Image();
+				img.src = e.target.result;
+
+				var $canvas = $('#pcw_logo_canvas_front');
+				$canvas.data('image-url', img.src);
+				$canvas.data('original-width', img.width);
+				$canvas.data('original-height', img.height);
+				
+				$canvas.closest('.logo-wrapper').fadeIn();
+
+				// Desenhar a imagem no canvas
+				renderLogo($canvas, img);
+			};
+			reader.readAsDataURL(file);
+		}
+	});
+
+	function renderLogo($canvas, img) {
+		var canvas = $canvas[0];
+		var ctx = canvas.getContext('2d');
+
+		// Aguarde a imagem ser carregada para definir as dimensões do canvas
+		img.onload = function () {
+			// Defina as dimensões do canvas com base na imagem
+			canvas.width = img.width;
+			canvas.height = img.height;
+
+			// Desenhe a imagem no canvas com as dimensões corretas
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+		};
+	}
+
+	$(document).on('click', function (event) {
+		var $target = $(event.target);
+
+		// Verifica se o clique foi fora do container da logo
+		if (!$target.closest('.logo-wrapper').length) {
+			// Esconde os ícones de controle
+			$('.logo-wrapper .control-icons').fadeOut();
+		}
+	});
+
+	$('.logo-wrapper').on('click', function () {
+		$(this).find('.control-icons').show();
+	});
+
+	$(document).on('click', '.delete-icon', function () {
+		// var $canvas = $(this).closest('.pcw_logo_canvas');
+		var $logoWrapper = $(this).closest('.logo-wrapper');
+		var canvas = $logoWrapper.find('canvas')[0];
+		console.log(canvas);
+		var ctx = canvas.getContext('2d');
+
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	});
+
+	interact('.logo-wrapper').draggable({
+		onmove: function (event) {
+			var wrapper = $(event.target).closest('.logo-wrapper');
+			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
+			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+
+			wrapper.css({
+				transform: 'translate(' + x + 'px, ' + y + 'px)'
+			});
+
+			wrapper.attr('data-x', x);
+			wrapper.attr('data-y', y);
+		}
+	});
+
+	interact('.move-icon').draggable({
+		onmove: function (event) {
+			var wrapper = $(event.target).closest('.logo-wrapper');
+			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
+			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+
+			wrapper.css({
+				transform: 'translate(' + x + 'px, ' + y + 'px)'
+			});
+
+			wrapper.attr('data-x', x);
+			wrapper.attr('data-y', y);
+		}
+	});
+
+	interact('.resize-icon').draggable({
+		onmove: function (event) {
+			var $wrapper = $(event.target).closest('.logo-wrapper');
+			var $canvas = $wrapper.find('.pcw_logo_canvas');
+			var canvas = $canvas[0];
+			var ctx = canvas.getContext('2d');
+
+			// Dimensões atuais do canvas
+			var currentWidth = canvas.width;
+			var currentHeight = canvas.height;
+
+			// Dimensões originais da imagem
+			var originalWidth = $canvas.data('original-width');
+			var originalHeight = $canvas.data('original-height');
+
+			// Calcula a nova largura e altura mantendo a proporção
+			var newWidth = currentWidth + event.dx;
+			var newHeight = (newWidth * originalHeight) / originalWidth;
+
+			if (newWidth > 0 && newHeight > 0) {
+				// Atualiza o tamanho do canvas
+				canvas.width = newWidth;
+				canvas.height = newHeight;
+
+				// Redesenha a imagem no novo tamanho
+				var img = new Image();
+				img.src = $canvas.data('image-url');
+
+				img.onload = function () {
+					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+				};
+			}
+		}
 	});
 });

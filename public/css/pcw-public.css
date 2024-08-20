@@ -14,7 +14,7 @@
     cursor: pointer;
 }
 
-ul#pcw_layers_menu
+#pcw_layers_menu
 {
     width: 100%;
     margin: 20px 0 -1px 10px;
@@ -117,12 +117,122 @@ ul#pcw_layers_menu
     position: relative;
     margin: 0;
     padding: 0;
+    z-index: 0;
 }
 
-.pcw_image
+.pcw_canvas
 {
     position: absolute;
     top: 0;
     left: 0;
     margin-top: -3px;
+}
+
+#pcw_upload_logo
+{
+    margin-top: 20px;
+    background-color: #eee;
+    padding: 30px;
+    border-radius: 12px;
+    border: 2px dashed #ccc;
+    width: 100%;
+}
+
+#pcw_logo_container_front
+,#pcw_logo_container_back
+{
+    position: absolute;
+    z-index: 1;
+    border: 2px dashed transparent;
+    margin: 0;
+    padding: 0;
+}
+
+#pcw_logo_container_front:hover
+,#pcw_logo_container_back:hover
+{
+    border: 2px dashed #00FF00;
+}
+
+#pcw_logo_canvas_front
+,#pcw_logo_canvas_back
+{
+    display: block;
+    margin: 10px;
+}
+
+.control-icons {
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.control-icons .pcw_icon {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    border-radius: 50%;
+    pointer-events: all;
+    box-shadow: 0 0 5px #aaa;
+}
+
+.move-icon
+{
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: move;
+}
+
+.move-icon::before
+{
+    font-family: WooCommerce;
+    font-size: 12px;
+    content: '\e022';
+    position: absolute;
+    left: 5px;
+    top: 3px;
+}
+
+.resize-icon
+{
+    bottom: -10px;
+    right: -10px;
+    transform: rotate(90deg);
+}
+
+.resize-icon::before
+{
+    font-family: WooCommerce;
+    font-size: 12px;
+    content: '\e035';
+    position: absolute;
+    left: 5px;
+    top: 3px;
+}
+
+.delete-icon
+{
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+}
+
+.delete-icon::before
+{
+    font-family: WooCommerce;
+    font-size: 25px;
+    line-height: 25px;
+    content: '\e013';
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.delete-icon:hover
+{
+    color: red;
 }

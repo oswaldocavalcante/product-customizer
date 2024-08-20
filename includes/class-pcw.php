@@ -158,6 +158,7 @@ class Pcw {
 		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'render_background'), 	5);
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_colors'), 		31);
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_layers'), 		32);
+		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_logo_upload'), 	33);
 	}
 
 	/**

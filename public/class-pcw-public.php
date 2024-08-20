@@ -50,17 +50,20 @@ class Pcw_Public
 	public function add_script()
 	{
 		$wc_product = wc_get_product(get_the_ID());
-		if ($wc_product->is_on_backorder()) {
-			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce'), $this->version, true);
+		if ($wc_product->is_on_backorder())
+		{
 			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), $this->version, 'all');
+			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce'), $this->version, true);
+			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
 		}
 	}
 
 	public function render_background()
 	{
 		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
-		if ($background) {
-		?>
+		if ($background)
+		{
+?>
 			<style>
 				.flex-viewport {
 					background-image: url('<?php echo esc_attr($background); ?>');
@@ -68,7 +71,7 @@ class Pcw_Public
 					background-position: center;
 				}
 			</style>
-		<?php	
+		<?php
 		}
 	}
 
@@ -100,11 +103,11 @@ class Pcw_Public
 				$layers_menu_items .= sprintf('<li class="pcw_layer_menu_item" data-layer-id="%s">%s</li>', $layer_data['id'], $layer_data['layer']);
 
 				$options_html = '';
-				foreach($layer_data['options'] as $option_data)
+				foreach ($layer_data['options'] as $option_data)
 				{
 
 					$option_colors_html = '';
-					foreach($option_data['colors'] as $color_data)
+					foreach ($option_data['colors'] as $color_data)
 					{
 						$option_colors_html .= sprintf('<span class="pcw_option_color" title="%s" style="background-color: %s"></span>', $color_data['name'], $color_data['value']);
 					}
@@ -123,5 +126,15 @@ class Pcw_Public
 			echo $layers_menu;
 			echo '<div id="pcw_layers_container">' . $layers_html . '</div>';
 		}
+	}
+
+	public function render_logo_upload()
+	{
+		?>
+		<div id="pcw_upload_logo">
+			<label for="pcw_button_logo_upload" class="pcw_button_label"><?php esc_html_e('Upload logo', 'pcw'); ?></label>
+			<input type="file" id="pcw_button_logo_upload" class="pcw_button" accept="image/*" title="<?php esc_html_e('Upload logo', 'pcw'); ?>" />
+		</div>
+		<?php
 	}
 }

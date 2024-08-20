@@ -120,8 +120,6 @@ jQuery(document).ready(function ($)
 		var $option = $(this).closest('.pcw_option');
 		$option.addClass('active');
 
-
-
 		var optionId = $option.data('option-id');
 		var colorHex = rgbToHex($(this).css('background-color'));
 
@@ -145,7 +143,9 @@ jQuery(document).ready(function ($)
 			optionCanvasFront.fadeOut();
 			optionCanvasBack.fadeOut();
 		} else {
-			$('.pcw_option_color').removeClass('active');
+			if ($option.hasClass('active')){
+				$option.find('.pcw_option_color').removeClass('active');
+			}
 			$(this).addClass('active');
 			optionCanvasFront.fadeIn();
 			optionCanvasBack.fadeIn();

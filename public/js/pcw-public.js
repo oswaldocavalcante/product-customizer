@@ -253,37 +253,48 @@ jQuery(document).ready(function ($)
 	});
 
 	interact('.resize-icon').draggable({
+		onstart: function (event) {
+			var $wrapper = $(event.target).closest('.logo-wrapper');
+			var $canvas = $wrapper.find('.pcw_logo_canvas');
+			var canvas = $canvas[0];
+
+			// Armazene a imagem original e suas dimensões
+			var img = new Image();
+			img.src = $canvas.data('image-url');
+			$canvas.data('original-img', img);
+			$canvas.data('original-width', canvas.width);
+			$canvas.data('original-height', canvas.height);
+		},
 		onmove: function (event) {
 			var $wrapper = $(event.target).closest('.logo-wrapper');
 			var $canvas = $wrapper.find('.pcw_logo_canvas');
 			var canvas = $canvas[0];
 			var ctx = canvas.getContext('2d');
 
-			// Dimensões atuais do canvas
-			var currentWidth = canvas.width;
-			var currentHeight = canvas.height;
-
 			// Dimensões originais da imagem
+			var originalImg = $canvas.data('original-img');
 			var originalWidth = $canvas.data('original-width');
 			var originalHeight = $canvas.data('original-height');
 
 			// Calcula a nova largura e altura mantendo a proporção
-			var newWidth = currentWidth + event.dx;
+			var delta = event.dx;  // Captura a mudança de posição no eixo X
+
+			var newWidth = originalWidth + delta;
 			var newHeight = (newWidth * originalHeight) / originalWidth;
 
-			if (newWidth > 0 && newHeight > 0) {
+			// Aplicar o novo tamanho somente se for maior que um limite mínimo para evitar o "tremor"
+			if (newWidth > 10 && newHeight > 10) {
 				// Atualiza o tamanho do canvas
 				canvas.width = newWidth;
 				canvas.height = newHeight;
 
 				// Redesenha a imagem no novo tamanho
-				var img = new Image();
-				img.src = $canvas.data('image-url');
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
 
-				img.onload = function () {
-					ctx.clearRect(0, 0, canvas.width, canvas.height);
-					ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-				};
+				// Atualiza as dimensões armazenadas para a próxima iteração
+				$canvas.data('original-width', newWidth);
+				$canvas.data('original-height', newHeight);
 			}
 		}
 	});

@@ -176,7 +176,7 @@
     border: 1px solid #bbb;
     border-radius: 50%;
     pointer-events: all;
-    box-shadow: 0 0 5px #aaa;
+    box-shadow: 0 0 5px #999    ;
 }
 
 .move-icon

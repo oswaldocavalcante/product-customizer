@@ -24,7 +24,7 @@ jQuery(document).ready(function ($)
 			</div>
 		`);
 		render(document.getElementById(`canvas_${view}`));
-		productWrapper.find('a').hide(); // hide original product image
+		productWrapper.find('a').hide(); // hide the original product image
 	}
 
 	$(document).on('click', '.pcw_color', function ()
@@ -162,31 +162,81 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	$('#pcw_button_logo_upload').on('click', function() {
-		// Reseta o valor do input de arquivo para permitir a seleção do mesmo arquivo
+	$('.pcw_upload_drop_area').on('click', function() {
+		// Reset the file input value to allow selecting the same file again
 		$(this).val('');
 	});
 
-	$('#pcw_button_logo_upload').on('change', function (event) {
+	$('.pcw_upload_drop_area').on('change', function (event) {
+		var view = '';
+		if($(this).hasClass('front')) {
+			view = 'front';
+		} else if($(this).hasClass('back')) {
+			view = 'back';
+		}
 		var file = event.target.files[0];
 		if (file) {
-			uploadLogo(file);
+			uploadLogo(file, view);
 		}
 	});
 
-	function uploadLogo(file) {
+	var $dropArea = $('.pcw_upload_drop_area');
+	var $fileInput = $('.pcw_upload_input');
+
+	function get_upload_view(dropArea) {
+		if(dropArea.hasClass('front')) {
+			return 'front';
+		} else if(dropArea.hasClass('back')) {
+			return 'back';
+		}
+	}
+
+	$dropArea.on('dragenter dragover', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$(this).addClass('highlight');
+	});
+
+	$dropArea.on('dragleave', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$(this).removeClass('highlight');
+	});
+
+	$dropArea.on('drop', function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$(this).removeClass('highlight');
+
+		var view = get_upload_view($(this));
+
+		var file = e.originalEvent.dataTransfer.files[0];
+		if (file) {
+			uploadLogo(file, view);
+		}
+	});
+
+	$fileInput.on('change', function (event) {
+		var view = get_upload_view($(this));
+		var file = event.target.files[0];
+		if (file) {
+			uploadLogo(file, view);
+		}
+	});
+
+	function uploadLogo(file, view) {
 		var reader = new FileReader();
 		reader.onload = function (e) {
 			var img = new Image();
 			img.src = e.target.result;
 
 			img.onload = function() {
-				var $logoWrapper = $('#pcw_logo_container_front');
-				var $canvas = $('#pcw_logo_canvas_front');
+				var $logoWrapper = $(`#pcw_logo_container_${view}`);
+				var $canvas = $(`#pcw_logo_canvas_${view}`);
 				var canvas = $canvas[0];
 				var ctx = canvas.getContext('2d');
 
-				// Definir um tamanho máximo para a logo
+				// Set a maximum size for the logo
 				var maxWidth = 200;
 				var maxHeight = 200;
 				var width = img.width;
@@ -204,29 +254,31 @@ jQuery(document).ready(function ($)
 					}
 				}
 
-				// Ajustar o tamanho do canvas
+				// Adjust the canvas size
 				canvas.width = width;
 				canvas.height = height;
 
-				// Limpar o canvas e desenhar a nova imagem
+				// Clear the canvas and draw the new image
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 				ctx.drawImage(img, 0, 0, width, height);
 
-				// Atualizar os dados do canvas
+				// Update the canvas data
 				$canvas.data('image-url', img.src);
 				$canvas.data('original-width', width);
 				$canvas.data('original-height', height);
 				
-				// Exibir o wrapper da logo
+				// Show the logo wrapper
 				$logoWrapper.show();
 
-				// Resetar a transformação do wrapper
+				// Reset the wrapper transformation
 				$logoWrapper.css('transform', 'translate(0px, 0px)');
 				$logoWrapper.attr('data-x', 0);
 				$logoWrapper.attr('data-y', 0);
 
-				$('.logo-wrapper').find('.control-icons').show();
-				$('.logo-wrapper').addClass('logo-active');
+				$(`#pcw_logo_container_${view}`).find('.control-icons').show();
+				$(`#pcw_logo_container_${view}`).addClass('logo-active');
+
+				console.log('Logo carregada e renderizada');
 			};
 		};
 		reader.readAsDataURL(file);
@@ -235,14 +287,15 @@ jQuery(document).ready(function ($)
 	$(document).on('click', function (event) {
 		var $target = $(event.target);
 
-		// Verifica se o clique foi fora do container da logo
+		// Check if the click was outside the logo container
 		if (!$target.closest('.logo-wrapper').length) {
 			$('.logo-wrapper .control-icons').fadeOut();
 			$('.logo-wrapper').removeClass('logo-active');
 		}
 	});
 
-	$('.logo-wrapper').on('click', function () {
+	$(document).on('click', '.logo-wrapper', function () {
+		console.log('click');
 		$(this).find('.control-icons').show();
 		$(this).addClass('logo-active');
 	});
@@ -253,16 +306,16 @@ jQuery(document).ready(function ($)
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext('2d');
 
-		// Limpar o canvas
+		// Clear the canvas
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-		// Ocultar o wrapper da logo
+		// Hide the logo wrapper
 		$logoWrapper.hide();
 
-		// Resetar os dados do canvas
+		// Reset the canvas data
 		$canvas.removeData('image-url original-width original-height');
 
-		// Resetar a transformação do wrapper
+		// Reset the wrapper transformation
 		$logoWrapper.css('transform', 'translate(0px, 0px)');
 		$logoWrapper.attr('data-x', 0);
 		$logoWrapper.attr('data-y', 0);

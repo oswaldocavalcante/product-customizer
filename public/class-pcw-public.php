@@ -128,13 +128,21 @@ class Pcw_Public
 		}
 	}
 
-	public function render_logo_upload()
+	public function render_uploads()
 	{
 		?>
-		<div id="pcw_upload_logo">
-			<label for="pcw_button_logo_upload" class="pcw_button_label"><?php esc_html_e('Upload logo', 'pcw'); ?></label>
-			<input type="file" id="pcw_button_logo_upload" class="pcw_button" accept="image/*" title="<?php esc_html_e('Upload logo', 'pcw'); ?>" />
+		<div id="pcw_uploads_container">
+			<div class="pcw_upload_drop_area front" id="pcw_upload_front">
+				<p><strong>Frente</strong> <br> Solte sua logo aqui ou</p>
+				<label for="pcw_button_upload_front" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
+				<input type="file" id="pcw_button_upload_front" class="pcw_upload_input" accept="image/*">
+			</div>
+			<div class="pcw_upload_drop_area back" id="pcw_upload_back">
+				<p><strong>Costas</strong> <br> Solte sua arte aqui ou</p>
+				<label for="pcw_button_upload_back" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
+				<input type="file" id="pcw_button_upload_back" class="pcw_upload_input" accept="image/*">
+			</div>
 		</div>
-		<?php
+<?php
 	}
 }

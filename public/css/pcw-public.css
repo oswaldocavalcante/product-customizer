@@ -143,15 +143,14 @@
 {
     position: absolute;
     z-index: 1;
-    border: 2px dashed transparent;
     margin: 0;
     padding: 0;
+    border: 2px dashed transparent;
 }
 
-#pcw_logo_container_front:hover
-,#pcw_logo_container_back:hover
+.logo-active
 {
-    border: 2px dashed #00FF00;
+    border: 2px dashed #00FF00 !important;
 }
 
 #pcw_logo_canvas_front
@@ -168,20 +167,20 @@
     display: none;
 }
 
-.control-icons .pcw_icon {
+.pcw_icon {
     position: absolute;
     width: 25px;
     height: 25px;
     background-color: #fff;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
     border-radius: 50%;
     pointer-events: all;
-    box-shadow: 0 0 5px #999    ;
+    box-shadow: 0 0 5px #999;
 }
 
 .move-icon
 {
-    bottom: -20px;
+    bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
     cursor: move;
@@ -190,28 +189,35 @@
 .move-icon::before
 {
     font-family: WooCommerce;
-    font-size: 12px;
+    font-size: 13px;
     content: '\e022';
     position: absolute;
     left: 5px;
-    top: 3px;
+    top: 2px;
 }
 
 .resize-icon
 {
-    bottom: -10px;
-    right: -10px;
-    transform: rotate(90deg);
+    width: 15px;
+    height: 15px;
 }
 
-.resize-icon::before
+.resize-icon.bottom-right
 {
-    font-family: WooCommerce;
-    font-size: 12px;
-    content: '\e035';
-    position: absolute;
-    left: 5px;
-    top: 3px;
+    bottom: -10px;
+    right: -10px;
+}
+
+.resize-icon.bottom-left
+{
+    bottom: -10px;
+    left: -10px;
+}
+
+.resize-icon.top-left
+{
+    top: -10px;
+    left: -10px;
 }
 
 .delete-icon

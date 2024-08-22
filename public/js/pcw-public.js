@@ -9,11 +9,13 @@ jQuery(document).ready(function ($)
 	function setCanvas(productWrapper, view)
 	{
 		productWrapper.html(`
-			<div id="pcw_logo_container_${view}" class="logo-wrapper" style="display: none">
+			<div id="pcw_logo_container_${view}" class="logo-wrapper logo-active" style="display: none">
 				<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
 				<div class="control-icons">
 					<div class="pcw_icon move-icon"></div>
-					<div class="pcw_icon resize-icon"></div>
+					<div class="pcw_icon resize-icon top-left"></div>
+					<div class="pcw_icon resize-icon bottom-right"></div>
+					<div class="pcw_icon resize-icon bottom-left"></div>
 					<div class="pcw_icon delete-icon"></div>
 				</div>
 			</div>
@@ -160,42 +162,74 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	// Quando uma logo é selecionada
+	$('#pcw_button_logo_upload').on('click', function() {
+		// Reseta o valor do input de arquivo para permitir a seleção do mesmo arquivo
+		$(this).val('');
+	});
+
 	$('#pcw_button_logo_upload').on('change', function (event) {
 		var file = event.target.files[0];
 		if (file) {
-			var reader = new FileReader();
-			reader.onload = function (e) {
-				var img = new Image();
-				img.src = e.target.result;
-
-				var $canvas = $('#pcw_logo_canvas_front');
-				$canvas.data('image-url', img.src);
-				$canvas.data('original-width', img.width);
-				$canvas.data('original-height', img.height);
-				
-				$canvas.closest('.logo-wrapper').fadeIn();
-
-				// Desenhar a imagem no canvas
-				renderLogo($canvas, img);
-			};
-			reader.readAsDataURL(file);
+			uploadLogo(file);
 		}
 	});
 
-	function renderLogo($canvas, img) {
-		var canvas = $canvas[0];
-		var ctx = canvas.getContext('2d');
+	function uploadLogo(file) {
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			var img = new Image();
+			img.src = e.target.result;
 
-		// Aguarde a imagem ser carregada para definir as dimensões do canvas
-		img.onload = function () {
-			// Defina as dimensões do canvas com base na imagem
-			canvas.width = img.width;
-			canvas.height = img.height;
+			img.onload = function() {
+				var $logoWrapper = $('#pcw_logo_container_front');
+				var $canvas = $('#pcw_logo_canvas_front');
+				var canvas = $canvas[0];
+				var ctx = canvas.getContext('2d');
 
-			// Desenhe a imagem no canvas com as dimensões corretas
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+				// Definir um tamanho máximo para a logo
+				var maxWidth = 200;
+				var maxHeight = 200;
+				var width = img.width;
+				var height = img.height;
+
+				if (width > height) {
+					if (width > maxWidth) {
+						height *= maxWidth / width;
+						width = maxWidth;
+					}
+				} else {
+					if (height > maxHeight) {
+						width *= maxHeight / height;
+						height = maxHeight;
+					}
+				}
+
+				// Ajustar o tamanho do canvas
+				canvas.width = width;
+				canvas.height = height;
+
+				// Limpar o canvas e desenhar a nova imagem
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				ctx.drawImage(img, 0, 0, width, height);
+
+				// Atualizar os dados do canvas
+				$canvas.data('image-url', img.src);
+				$canvas.data('original-width', width);
+				$canvas.data('original-height', height);
+				
+				// Exibir o wrapper da logo
+				$logoWrapper.show();
+
+				// Resetar a transformação do wrapper
+				$logoWrapper.css('transform', 'translate(0px, 0px)');
+				$logoWrapper.attr('data-x', 0);
+				$logoWrapper.attr('data-y', 0);
+
+				$('.logo-wrapper').find('.control-icons').show();
+				$('.logo-wrapper').addClass('logo-active');
+			};
 		};
+		reader.readAsDataURL(file);
 	}
 
 	$(document).on('click', function (event) {
@@ -203,99 +237,144 @@ jQuery(document).ready(function ($)
 
 		// Verifica se o clique foi fora do container da logo
 		if (!$target.closest('.logo-wrapper').length) {
-			// Esconde os ícones de controle
 			$('.logo-wrapper .control-icons').fadeOut();
+			$('.logo-wrapper').removeClass('logo-active');
 		}
 	});
 
 	$('.logo-wrapper').on('click', function () {
 		$(this).find('.control-icons').show();
+		$(this).addClass('logo-active');
 	});
 
 	$(document).on('click', '.delete-icon', function () {
-		// var $canvas = $(this).closest('.pcw_logo_canvas');
 		var $logoWrapper = $(this).closest('.logo-wrapper');
-		var canvas = $logoWrapper.find('canvas')[0];
-		console.log(canvas);
+		var $canvas = $logoWrapper.find('.pcw_logo_canvas');
+		var canvas = $canvas[0];
 		var ctx = canvas.getContext('2d');
 
+		// Limpar o canvas
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		// Ocultar o wrapper da logo
+		$logoWrapper.hide();
+
+		// Resetar os dados do canvas
+		$canvas.removeData('image-url original-width original-height');
+
+		// Resetar a transformação do wrapper
+		$logoWrapper.css('transform', 'translate(0px, 0px)');
+		$logoWrapper.attr('data-x', 0);
+		$logoWrapper.attr('data-y', 0);
+
+		console.log('Logo deletada');
 	});
 
-	interact('.logo-wrapper').draggable({
-		onmove: function (event) {
-			var wrapper = $(event.target).closest('.logo-wrapper');
-			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
-			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+	function resizeLogoWrapper(event, $wrapper, $canvas, direction) {
+		var canvas = $canvas[0];
+		var ctx = canvas.getContext('2d');
 
-			wrapper.css({
-				transform: 'translate(' + x + 'px, ' + y + 'px)'
-			});
+		var originalImg = $canvas.data('original-img');
+		var originalWidth = $canvas.data('original-width');
+		var originalHeight = $canvas.data('original-height');
 
-			wrapper.attr('data-x', x);
-			wrapper.attr('data-y', y);
+		var deltaX = event.dx;
+		var deltaY = event.dy;
+
+		var newWidth, newHeight;
+
+		switch (direction) {
+			case 'bottom-right':
+				newWidth = originalWidth + deltaX;
+				newHeight = (newWidth * originalHeight) / originalWidth;
+				break;
+			case 'top-left':
+				newWidth = originalWidth - deltaX;
+				newHeight = (newWidth * originalHeight) / originalWidth;
+				$wrapper.css({
+					transform: 'translate(' + (parseFloat($wrapper.attr('data-x') || 0) + deltaX) + 'px, ' + 
+							   (parseFloat($wrapper.attr('data-y') || 0) + deltaY) + 'px)'
+				});
+				$wrapper.attr('data-x', parseFloat($wrapper.attr('data-x') || 0) + deltaX);
+				$wrapper.attr('data-y', parseFloat($wrapper.attr('data-y') || 0) + deltaY);
+				break;
+			case 'bottom-left':
+				newWidth = originalWidth - deltaX;
+				newHeight = (newWidth * originalHeight) / originalWidth;
+				$wrapper.css({
+					transform: 'translate(' + (parseFloat($wrapper.attr('data-x') || 0) + deltaX) + 'px, ' + 
+							   (parseFloat($wrapper.attr('data-y') || 0)) + 'px)'
+				});
+				$wrapper.attr('data-x', parseFloat($wrapper.attr('data-x') || 0) + deltaX);
+				break;
 		}
-	});
 
-	interact('.move-icon').draggable({
-		onmove: function (event) {
-			var wrapper = $(event.target).closest('.logo-wrapper');
-			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
-			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+		if (newWidth > 10 && newHeight > 10) {
+			canvas.width = newWidth;
+			canvas.height = newHeight;
 
-			wrapper.css({
-				transform: 'translate(' + x + 'px, ' + y + 'px)'
-			});
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
 
-			wrapper.attr('data-x', x);
-			wrapper.attr('data-y', y);
+			$canvas.data('original-width', newWidth);
+			$canvas.data('original-height', newHeight);
 		}
-	});
+	}
 
-	interact('.resize-icon').draggable({
-		onstart: function (event) {
-			var $wrapper = $(event.target).closest('.logo-wrapper');
-			var $canvas = $wrapper.find('.pcw_logo_canvas');
-			var canvas = $canvas[0];
+	function setupResizeInteraction(selector, direction) {
+		interact(selector).draggable({
+			onstart: function (event) {
+				var $wrapper = $(event.target).closest('.logo-wrapper');
+				var $canvas = $wrapper.find('.pcw_logo_canvas');
+				var canvas = $canvas[0];
 
-			// Armazene a imagem original e suas dimensões
-			var img = new Image();
-			img.src = $canvas.data('image-url');
-			$canvas.data('original-img', img);
-			$canvas.data('original-width', canvas.width);
-			$canvas.data('original-height', canvas.height);
-		},
-		onmove: function (event) {
-			var $wrapper = $(event.target).closest('.logo-wrapper');
-			var $canvas = $wrapper.find('.pcw_logo_canvas');
-			var canvas = $canvas[0];
-			var ctx = canvas.getContext('2d');
-
-			// Dimensões originais da imagem
-			var originalImg = $canvas.data('original-img');
-			var originalWidth = $canvas.data('original-width');
-			var originalHeight = $canvas.data('original-height');
-
-			// Calcula a nova largura e altura mantendo a proporção
-			var delta = event.dx;  // Captura a mudança de posição no eixo X
-
-			var newWidth = originalWidth + delta;
-			var newHeight = (newWidth * originalHeight) / originalWidth;
-
-			// Aplicar o novo tamanho somente se for maior que um limite mínimo para evitar o "tremor"
-			if (newWidth > 10 && newHeight > 10) {
-				// Atualiza o tamanho do canvas
-				canvas.width = newWidth;
-				canvas.height = newHeight;
-
-				// Redesenha a imagem no novo tamanho
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(originalImg, 0, 0, canvas.width, canvas.height);
-
-				// Atualiza as dimensões armazenadas para a próxima iteração
-				$canvas.data('original-width', newWidth);
-				$canvas.data('original-height', newHeight);
+				var img = new Image();
+				img.src = $canvas.data('image-url');
+				$canvas.data('original-img', img);
+				$canvas.data('original-width', canvas.width);
+				$canvas.data('original-height', canvas.height);
+			},
+			onmove: function (event) {
+				var $wrapper = $(event.target).closest('.logo-wrapper');
+				var $canvas = $wrapper.find('.pcw_logo_canvas');
+				resizeLogoWrapper(event, $wrapper, $canvas, direction);
 			}
+		});
+	}
+
+	setupResizeInteraction('.resize-icon.bottom-right', 'bottom-right');
+	setupResizeInteraction('.resize-icon.top-left', 'top-left');
+	setupResizeInteraction('.resize-icon.bottom-left', 'bottom-left');
+
+	interact('.logo-wrapper').draggable
+	({
+		onmove: function (event) {
+			var wrapper = $(event.target).closest('.logo-wrapper');
+			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
+			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+
+			wrapper.css({
+				transform: 'translate(' + x + 'px, ' + y + 'px)'
+			});
+
+			wrapper.attr('data-x', x);
+			wrapper.attr('data-y', y);
+		}
+	});
+
+	interact('.move-icon').draggable
+	({
+		onmove: function (event) {
+			var wrapper = $(event.target).closest('.logo-wrapper');
+			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
+			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
+
+			wrapper.css({
+				transform: 'translate(' + x + 'px, ' + y + 'px)'
+			});
+
+			wrapper.attr('data-x', x);
+			wrapper.attr('data-y', y);
 		}
 	});
 });

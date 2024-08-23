@@ -52,9 +52,15 @@ class Pcw_Public
 		$wc_product = wc_get_product(get_the_ID());
 		if ($wc_product->is_on_backorder())
 		{
-			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), $this->version, 'all');
-			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce'), $this->version, true);
 			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
+			wp_enqueue_script('dom-to-image', 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js', array(), null, true);
+			
+			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), $this->version, 'all');
+			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'dom-to-image'), $this->version, true);
+			wp_localize_script($this->plugin_name, 'pcw_ajax_object', array(
+				'url' 	=> admin_url('admin-ajax.php'),
+				'nonce' 	=> wp_create_nonce('pcw_nonce'),
+			));
 		}
 	}
 
@@ -63,7 +69,7 @@ class Pcw_Public
 		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
 		if ($background)
 		{
-?>
+			?>
 			<style>
 				.flex-viewport {
 					background-image: url('<?php echo esc_attr($background); ?>');
@@ -71,7 +77,7 @@ class Pcw_Public
 					background-position: center;
 				}
 			</style>
-		<?php
+			<?php
 		}
 	}
 
@@ -135,14 +141,39 @@ class Pcw_Public
 			<div class="pcw_upload_drop_area front" id="pcw_upload_front">
 				<p><strong>Frente</strong> <br> Solte sua logo aqui ou</p>
 				<label for="pcw_button_upload_front" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
-				<input type="file" id="pcw_button_upload_front" class="pcw_upload_input" accept="image/*">
+				<input type="file" id="pcw_button_upload_front" class="pcw_upload_input" accept="image/png, image/svg+xml, application/pdf">
 			</div>
 			<div class="pcw_upload_drop_area back" id="pcw_upload_back">
 				<p><strong>Costas</strong> <br> Solte sua arte aqui ou</p>
 				<label for="pcw_button_upload_back" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
-				<input type="file" id="pcw_button_upload_back" class="pcw_upload_input" accept="image/*">
+				<input type="file" id="pcw_button_upload_back" class="pcw_upload_input" accept="image/png, image/svg+xml, application/pdf">
 			</div>
 		</div>
-<?php
+		<?php
+
+		$product_id = get_the_ID();
+		$customizations = WC()->session->get("pcw_customizations_{$product_id}");
+		if(array_key_exists('images', $customizations) && array_key_exists('front', $customizations['images']) && array_key_exists('back', $customizations['images']))
+		{
+			echo '<img src="' . $customizations['images']['front'] . '" alt="Frente">';
+			echo '<img src="' . $customizations['images']['back'] . '" alt="Costas">';
+		}
+	}
+
+	public function save_customizations() {
+		if (!isset($_POST['product_id']) || !isset($_POST['customizations'])) {
+			wp_send_json_error('Dados inválidos');
+		}
+
+		$product_id = intval($_POST['product_id']);
+		$customizations = json_decode(stripslashes($_POST['customizations']), true);
+
+		// Salva as customizações na sessão do usuário
+		WC()->session->set("pcw_customizations_{$product_id}", $customizations);
+
+		// Dispara o hook para outros plugins
+		do_action('pcw_customizations_updated', $customizations, $product_id);
+
+		wp_send_json_success('Customizações salvas com sucesso');
 	}
 }

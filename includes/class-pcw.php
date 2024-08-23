@@ -159,6 +159,9 @@ class Pcw {
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_colors'), 	31);
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_layers'), 	32);
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_uploads'), 	33);
+
+		add_action('wp_ajax_pcw_save_customizations', 			array($plugin_public, 'save_customizations'));
+		add_action('wp_ajax_nopriv_pcw_save_customizations', 	array($plugin_public, 'save_customizations'));
 	}
 
 	/**

@@ -8,24 +8,38 @@ jQuery(document).ready(function ($)
 
 	function setCanvas(productWrapper, view)
 	{
+		productWrapper.addClass(`pcw_${view}`);
 		productWrapper.html(`
-			<div id="pcw_logo_container_${view}" class="logo-wrapper logo-active" style="display: none">
-				<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
-				<div class="control-icons">
-					<div class="pcw_icon move-icon"></div>
-					<div class="pcw_icon resize-icon top-left"></div>
-					<div class="pcw_icon resize-icon bottom-right"></div>
-					<div class="pcw_icon resize-icon bottom-left"></div>
-					<div class="pcw_icon delete-icon"></div>
-				</div>
-			</div>
 			<div id="canvas_container_${view}">
 				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
+				<div id="pcw_logo_container_${view}" class="pcw_logo_container logo-active" style="display: none">
+					<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
+					<div class="control-icons">
+						<div class="pcw_icon move-icon"></div>
+						<div class="pcw_icon resize-icon top-left"></div>
+						<div class="pcw_icon resize-icon bottom-right"></div>
+						<div class="pcw_icon resize-icon bottom-left"></div>
+						<div class="pcw_icon delete-icon"></div>
+					</div>
+				</div>
 			</div>
 		`);
+
+		const canvas = document.getElementById(`canvas_${view}`);
+		const ctx = canvas.getContext('2d');
+		const img = new Image();
+		img.onload = function() {
+			canvas.setAttribute('data-original-width', this.width);
+			canvas.setAttribute('data-original-height', this.height);
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+		};
+		img.src = productWrapper.find('a').attr('href');
+
 		render(document.getElementById(`canvas_${view}`));
 		productWrapper.find('a').hide(); // hide the original product image
 	}
+
+	$('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');
 
 	$(document).on('click', '.pcw_color', function ()
 	{
@@ -288,20 +302,19 @@ jQuery(document).ready(function ($)
 		var $target = $(event.target);
 
 		// Check if the click was outside the logo container
-		if (!$target.closest('.logo-wrapper').length) {
-			$('.logo-wrapper .control-icons').fadeOut();
-			$('.logo-wrapper').removeClass('logo-active');
+		if (!$target.closest('.pcw_logo_container').length && $('.pcw_logo_container').hasClass('logo-active')) {
+			$('.pcw_logo_container .control-icons').fadeOut();
+			$('.pcw_logo_container').removeClass('logo-active');
 		}
 	});
 
-	$(document).on('click', '.logo-wrapper', function () {
-		console.log('click');
+	$(document).on('click', '.pcw_logo_container', function () {
 		$(this).find('.control-icons').show();
 		$(this).addClass('logo-active');
 	});
 
 	$(document).on('click', '.delete-icon', function () {
-		var $logoWrapper = $(this).closest('.logo-wrapper');
+		var $logoWrapper = $(this).closest('.pcw_logo_container');
 		var $canvas = $logoWrapper.find('.pcw_logo_canvas');
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext('2d');
@@ -319,8 +332,6 @@ jQuery(document).ready(function ($)
 		$logoWrapper.css('transform', 'translate(0px, 0px)');
 		$logoWrapper.attr('data-x', 0);
 		$logoWrapper.attr('data-y', 0);
-
-		console.log('Logo deletada');
 	});
 
 	function resizeLogoWrapper(event, $wrapper, $canvas, direction) {
@@ -377,7 +388,7 @@ jQuery(document).ready(function ($)
 	function setupResizeInteraction(selector, direction) {
 		interact(selector).draggable({
 			onstart: function (event) {
-				var $wrapper = $(event.target).closest('.logo-wrapper');
+				var $wrapper = $(event.target).closest('.pcw_logo_container');
 				var $canvas = $wrapper.find('.pcw_logo_canvas');
 				var canvas = $canvas[0];
 
@@ -388,7 +399,7 @@ jQuery(document).ready(function ($)
 				$canvas.data('original-height', canvas.height);
 			},
 			onmove: function (event) {
-				var $wrapper = $(event.target).closest('.logo-wrapper');
+				var $wrapper = $(event.target).closest('.pcw_logo_container');
 				var $canvas = $wrapper.find('.pcw_logo_canvas');
 				resizeLogoWrapper(event, $wrapper, $canvas, direction);
 			}
@@ -399,10 +410,10 @@ jQuery(document).ready(function ($)
 	setupResizeInteraction('.resize-icon.top-left', 'top-left');
 	setupResizeInteraction('.resize-icon.bottom-left', 'bottom-left');
 
-	interact('.logo-wrapper').draggable
+	interact('.pcw_logo_container').draggable
 	({
 		onmove: function (event) {
-			var wrapper = $(event.target).closest('.logo-wrapper');
+			var wrapper = $(event.target).closest('.pcw_logo_container');
 			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
 			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
 
@@ -418,7 +429,7 @@ jQuery(document).ready(function ($)
 	interact('.move-icon').draggable
 	({
 		onmove: function (event) {
-			var wrapper = $(event.target).closest('.logo-wrapper');
+			var wrapper = $(event.target).closest('.pcw_logo_container');
 			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
 			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;
 
@@ -430,4 +441,72 @@ jQuery(document).ready(function ($)
 			wrapper.attr('data-y', y);
 		}
 	});
+
+	$('#pcw_save_button').on('click', function() {
+		saveCustomizations();
+	});
+
+	function saveCustomizations() {
+		var customizations = {
+			color: $('.pcw_color.active').css('background-color'),
+			layers: {},
+			images: {}
+		};
+
+		$('.pcw_layer').each(function () {
+			var layerId = $(this).data('layer-id');
+			customizations.layers[layerId] = {
+				option: $(this).find('.pcw_option.active').data('option-id'),
+				color: $(this).find('.pcw_option_color.active').css('background-color')
+			};
+		});
+
+		// Capturar as imagens dos containers
+		var capturePromises = ['front', 'back'].map(function (view) {
+			var container = document.querySelector(`#canvas_container_${view}`);
+			if (container) {
+				return new Promise(function(resolve, reject) {
+					domtoimage.toPng(container)
+						.then(function (dataUrl) {
+							customizations.images[view] = dataUrl;
+							resolve();
+						})
+						.catch(function (error) {
+							console.error('Error capturing image:', error);
+							resolve();
+						});
+				});
+			}
+		});
+
+		// Esperar todas as capturas serem concluídas
+		Promise.all(capturePromises).then(() => {
+			// Disparar um evento personalizado com as customizações
+			$(document).trigger('pcw_customizations_updated', [customizations]);
+
+			// Envia os dados para o servidor
+			$.ajax({
+				url: pcw_ajax_object.url,
+				type: 'POST',
+				data: {
+					action: 'pcw_save_customizations',
+					nonce: pcw_ajax_object.nonce,
+					product_id: $('input[name="product_id"]').val(),
+					customizations: JSON.stringify(customizations),
+				},
+				success: function (response) {
+					if (response.success) {
+						console.log('Customizações salvas com sucesso');
+					} else {
+						console.error('Erro ao salvar customizações');
+					}
+				},
+				error: function (error) {
+					console.error('Ajax error:', error);
+				}
+			});
+		}).catch(error => {
+			console.error('Erro ao capturar as imagens:', error);
+		});
+	}
 });

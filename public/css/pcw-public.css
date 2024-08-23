@@ -181,6 +181,8 @@
 ,#pcw_logo_container_back
 {
     position: absolute;
+    top: 0;
+    left: 0;
     z-index: 1;
     margin: 0;
     padding: 0;
@@ -280,4 +282,39 @@
 .delete-icon:hover
 {
     color: red;
+}
+
+.woocommerce-product-gallery__trigger
+{
+    display: none;
+}
+
+#pcw_save_button
+{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 1;
+}
+
+#pcw_save_button::before
+{
+    font-family: WooCommerce;
+    content: '\e015';
+    font-size: 25px;
+    line-height: 25px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 70%;
+}
+
+#pcw_save_button:hover
+{
+    color: #00FF00;
 }

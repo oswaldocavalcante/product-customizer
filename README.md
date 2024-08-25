@@ -1,4 +1,6 @@
-=== Plugin Name ===
+# Product Customizer for WooCommerce (PCW)
+
+Plugin Name: Product Customizer for WooCommerce
 Author: Oswaldo Cavalcante
 Author URI: https://oswaldocavalcante.com/
 Donate link: https://oswaldocavalcante.com/
@@ -6,11 +8,7 @@ Version: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-== Description ==
-
-# Product Customizer for WooCommerce (PCW)
-
-## Summary
+## Description
 
 Product Customizer for WooCommerce (PCW) is a powerful plugin that enhances the WooCommerce shopping experience by allowing customers to customize products before purchase. Key features include:
 
@@ -21,6 +19,38 @@ Product Customizer for WooCommerce (PCW) is a powerful plugin that enhances the 
 - Saving and retrieving customizations
 
 This plugin is perfect for businesses offering personalized products such as t-shirts, mugs, or any item that can be customized by the customer.
+
+## Installation
+
+1. Upload the plugin files to the `/wp-content/plugins/product-customizer-for-woocommerce` directory, or install the plugin directly from the WordPress plugins area.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. Configure the plugin options on the WooCommerce settings page.
+
+## Usage
+
+[Detailed instructions on how to use the plugin]
+
+## Frequently Asked Questions
+
+[FAQs and their answers]
+
+## Screenshots
+
+[Plugin screenshots in action]
+
+## Changelog
+
+### 1.0.0
+* Initial release
+
+## Upgrade Notice
+
+### 1.0.0
+Initial version of the plugin.
+
+## Contributing
+
+Contributions are welcome! Please read the CONTRIBUTING.md file for details on our code of conduct and the pull request process.
 
 ## How to Trigger Image Saving and Retrieve Them on the Server Side
 

@@ -22,7 +22,7 @@ This plugin is perfect for businesses offering personalized products such as t-s
 
 ## Installation
 
-1. Upload the plugin files to the `/wp-content/plugins/product-customizer-for-woocommerce` directory, or install the plugin directly from the WordPress plugins area.
+1. Upload the plugin files to the `/wp-content/plugins/product-customizer` directory, or install the plugin directly from the WordPress plugins area.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Configure the plugin options on the WooCommerce settings page.
 

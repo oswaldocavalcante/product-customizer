@@ -118,14 +118,6 @@ class Pcw_Public
 			</div>
 		</div>
 		<?php
-
-		$product_id = get_the_ID();
-		$customizations = WC()->session->get("pcw_customizations_{$product_id}");
-		if(is_array($customizations) && array_key_exists('images', $customizations) && array_key_exists('front', $customizations['images']) && array_key_exists('back', $customizations['images']))
-		{
-			echo '<img src="' . $customizations['images']['front'] . '" alt="Frente">';
-			echo '<img src="' . $customizations['images']['back'] . '" alt="Costas">';
-		}
 	}
 
 	public function save_customizations() {

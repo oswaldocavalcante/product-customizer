@@ -129,6 +129,7 @@ class Pcw
 	{
 		$plugin_public = new Pcw_Public();
 
+		add_action('woocommerce_init', 							array($plugin_public, 'session_start'), 	1);
 		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_script')			);
 		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'render_background'), 5);
 		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_colors'), 	31);

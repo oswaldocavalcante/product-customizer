@@ -15,6 +15,18 @@
 
 class Pcw_Public
 {
+	public function session_start()
+	{
+		if (is_user_logged_in() || is_admin()){
+			return;
+		}
+		if (isset(WC()->session)){
+			if (!WC()->session->has_session()){
+				WC()->session->set_customer_session_cookie(true);
+			}
+		}
+	}
+
 	public function add_script()
 	{
 		$wc_product = wc_get_product(get_the_ID());
@@ -100,18 +112,6 @@ class Pcw_Public
 			echo $layers_menu;
 			echo '<div id="pcw_layers_container">' . $layers_html . '</div>';
 		}
-
-		// $product_id = get_the_ID();
-		// $customizations = WC()->session->get("pcw_customizations_{$product_id}");
-
-		// if (is_array($customizations) && isset($customizations['images']))
-		// {
-		// 	$front_image = $customizations['images']['front'] ?? null;
-		// 	$back_image = $customizations['images']['back'] ?? null;
-
-		// 	echo '<img src="' . $front_image . '" alt="Front Image">';
-		// 	echo '<img src="' . $back_image . '" alt="Back Image">';
-		// }
 	}
 
 	public function render_uploads()
@@ -145,5 +145,10 @@ class Pcw_Public
 
 		do_action('pcw_customizations_updated', $customizations, $product_id);
 		wp_send_json_success('Customizações salvas com sucesso');
+	}
+
+	public function get_customizations($product_id)
+	{
+		return WC()->session->get("pcw_customizations_{$product_id}");
 	}
 }

@@ -8,6 +8,8 @@ jQuery(document).ready(function ($)
 
 	function setCanvas(productWrapper, view)
 	{
+		const originalImageURL = productWrapper.find('a').attr('href');
+
 		productWrapper.addClass(`pcw_${view}`);
 		productWrapper.html(`
 			<div id="canvas_container_${view}">
@@ -26,17 +28,13 @@ jQuery(document).ready(function ($)
 		`);
 
 		const canvas = document.getElementById(`canvas_${view}`);
-		const ctx = canvas.getContext('2d');
 		const img = new Image();
+		img.src = originalImageURL;
 		img.onload = function() {
 			canvas.setAttribute('data-original-width', this.width);
 			canvas.setAttribute('data-original-height', this.height);
-			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 		};
-		img.src = productWrapper.find('a').attr('href');
-
 		render(document.getElementById(`canvas_${view}`));
-		productWrapper.find('a').hide(); // hide the original product image
 	}
 
 	// $('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');

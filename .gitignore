@@ -50,3 +50,4 @@ wp-config.php
 /wp-content
 /vendor
 product-customizer.code-workspace
+.vscode

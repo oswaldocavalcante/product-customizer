@@ -28,25 +28,62 @@ This plugin is perfect for businesses offering personalized products such as t-s
 
 ## Usage
 
-[Detailed instructions on how to use the plugin]
+1. After installation and activation, go to the product edit page in the WordPress admin.
 
-## Frequently Asked Questions
+2. Set up the customization options for your product:
+   - Add background images for the product views
+   - Define color options for the product
+   - Create layers for different customizable parts of the product
+   - Add options for each layer with associated images and colors
 
-[FAQs and their answers]
+3. On the front-end product page, customers will see:
+   - Color selection options
+   - Layer-based customization menu
+   - Upload areas for logos or custom designs
 
-## Screenshots
+4. Customers can:
+   - Select colors for different parts of the product
+   - Choose options for each customizable layer
+   - Upload and position logos or designs on the product
+   - See a real-time preview of their customizations
 
-[Plugin screenshots in action]
+5. The customizations are automatically saved and can be retrieved later.
 
-## Changelog
+6. When a customer adds the product to the cart, their customizations are saved with the order.
 
-### 1.0.0
-* Initial release
+For developers who want to integrate with PCW:
 
-## Upgrade Notice
+```javascript
+$(document).trigger('pcw_save_customizations');
+```
 
-### 1.0.0
-Initial version of the plugin.
+This event can be used to trigger the saving of customizations programmatically.
+
+To retrieve saved customizations on the server-side:
+
+```php
+$product_id = get_the_ID(); // Or however you're getting the product ID
+$customizations = WC()->session->get("pcw_customizations_{$product_id}");
+   
+if (is_array($customizations) && isset($customizations['images'])) {
+    $front_image = $customizations['images']['front'] ?? null;
+    $back_image = $customizations['images']['back'] ?? null;
+    
+    // Use $front_image and $back_image as needed
+}
+```
+
+You can also hook into the customization saving process:
+
+```php
+add_action('pcw_customizations_updated', 'your_function_name', 10, 2);
+   
+function your_function_name($customizations, $product_id) {
+    // Your code here
+    // $customizations is an array containing all saved customization data
+    // $product_id is the ID of the product being customized
+}
+```
 
 ## Contributing
 

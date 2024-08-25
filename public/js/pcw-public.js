@@ -433,6 +433,9 @@ jQuery(document).ready(function ($)
 	});
 
 	function saveCustomizations() {
+		$('.control-icons').hide();
+		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
+
 		var customizations = {
 			color: $('.pcw_color.active').css('background-color'),
 			layers: {},
@@ -447,63 +450,72 @@ jQuery(document).ready(function ($)
 			};
 		});
 
-		// Capturar as imagens dos containers
-		var imagePromises = ['front', 'back'].map(function (view) {
-			var container = document.querySelector(`#canvas_container_${view}`);
-			var canvas = document.querySelector(`#canvas_${view}`);
-			if (container && canvas) {
-				return new Promise(function(resolve, reject) {
-					var originalWidth = parseInt(canvas.getAttribute('data-original-width'));
-					var originalHeight = parseInt(canvas.getAttribute('data-original-height'));
+		var viewsToCapture = ['front', 'back'];
+		var capturedViews = 0;
 
-					domtoimage.toPng(container, {
-						width: originalWidth,
-						height: originalHeight,
-						style: {
-							transform: 'scale(' + originalWidth / container.offsetWidth + ')',
-							transformOrigin: 'top left'
-						}
-					})
-					.then(function (dataUrl) {
-						customizations.images[view] = dataUrl;
-						resolve();
-					})
-					.catch(function (error) {
-						console.error('Erro ao capturar imagem:', error);
-						resolve();
-					});
+		viewsToCapture.forEach(function (view) {
+			var container = document.querySelector(`#canvas_container_${view}`);
+			if (container) {
+				// Forçar um reflow para garantir que todas as mudanças foram aplicadas
+				container.offsetHeight;
+
+				html2canvas(container, {
+					useCORS: true,
+					allowTaint: true,
+					logging: true,
+					onclone: function(clonedDoc) {
+						// Ajuste qualquer elemento no clone se necessário
+						var clonedContainer = clonedDoc.querySelector(`#canvas_container_${view}`);
+						// Por exemplo, se houver elementos ocultos que precisam ser visíveis para a captura:
+						// clonedContainer.querySelectorAll('.hidden-element').forEach(el => el.style.display = 'block');
+					}
+				}).then(function(canvas) {
+					customizations.images[view] = canvas.toDataURL('image/png');
+					capturedViews++;
+
+					if (capturedViews === viewsToCapture.length) {
+						sendCustomizationsToServer(customizations, product_id);
+					}
+				}).catch(function(error) {
+					console.error('Erro ao capturar imagem:', error);
+					capturedViews++;
+					if (capturedViews === viewsToCapture.length) {
+						sendCustomizationsToServer(customizations, product_id);
+					}
 				});
 			} else {
-				return Promise.resolve();
+				console.error(`Container para ${view} não encontrado`);
+				capturedViews++;
+				if (capturedViews === viewsToCapture.length) {
+					sendCustomizationsToServer(customizations, product_id);
+				}
+			}
+		});
+	}
+
+	function sendCustomizationsToServer(customizations, product_id) {
+		console.log('Customizações a serem enviadas:', customizations);
+		$.ajax({
+			url: pcw_ajax_object.url,
+			type: 'POST',
+			data: {
+				action: 'pcw_save_customizations',
+				nonce: pcw_ajax_object.nonce,
+				product_id: product_id,
+				customizations: JSON.stringify(customizations),
+			},
+			success: function (response) {
+				if (response.success) {
+					console.log('Customizações salvas com sucesso');
+				} else {
+					console.error('Erro ao salvar customizações');
+				}
+			},
+			error: function (error) {
+				console.error('Erro Ajax:', error);
 			}
 		});
 
-		// Esperar todas as imagens serem capturadas antes de continuar
-		Promise.all(imagePromises).then(function() {
-			// Disparar um evento personalizado com as customizações
-			$(document).trigger('pcw_customizations_updated', [customizations]);
-
-			// Envia os dados para o servidor
-			$.ajax({
-				url: pcw_ajax_object.url,
-				type: 'POST',
-				data: {
-					action: 'pcw_save_customizations',
-					nonce: pcw_ajax_object.nonce,
-					product_id: $('input[name="product_id"]').val(),
-					customizations: JSON.stringify(customizations),
-				},
-				success: function (response) {
-					if (response.success) {
-						console.log('Customizações salvas com sucesso');
-					} else {
-						console.error('Erro ao salvar customizações');
-					}
-				},
-				error: function (error) {
-					console.error('Erro Ajax:', error);
-				}
-			});
-		});
+		$(document).trigger('pcw_customizations_updated', [customizations]);
 	}
 });

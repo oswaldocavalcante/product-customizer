@@ -15,51 +15,19 @@
 
 class Pcw_Public
 {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct($plugin_name, $version)
-	{
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-	}
-
 	public function add_script()
 	{
 		$wc_product = wc_get_product(get_the_ID());
 		if ($wc_product->is_on_backorder())
 		{
-			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
-			wp_enqueue_script('dom-to-image', 'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js', array(), null, true);
+			wp_enqueue_script('interactjs', 	'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', 			array(), null, true);
+			wp_enqueue_script('dom-to-image', 	'https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js', 	array(), null, true);
 			
-			wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), $this->version, 'all');
-			wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'dom-to-image'), $this->version, true);
-			wp_localize_script($this->plugin_name, 'pcw_ajax_object', array(
+			wp_enqueue_style(	'pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
+			wp_enqueue_script(	'pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', 	array('jquery', 'woocommerce', 'dom-to-image'), PCW_VERSION, true);
+			wp_localize_script(	'pcw', 'pcw_ajax_object', array(
 				'url' 	=> admin_url('admin-ajax.php'),
-				'nonce' 	=> wp_create_nonce('pcw_nonce'),
+				'nonce' => wp_create_nonce('pcw_nonce'),
 			));
 		}
 	}
@@ -153,7 +121,7 @@ class Pcw_Public
 
 		$product_id = get_the_ID();
 		$customizations = WC()->session->get("pcw_customizations_{$product_id}");
-		if(array_key_exists('images', $customizations) && array_key_exists('front', $customizations['images']) && array_key_exists('back', $customizations['images']))
+		if(is_array($customizations) && array_key_exists('images', $customizations) && array_key_exists('front', $customizations['images']) && array_key_exists('back', $customizations['images']))
 		{
 			echo '<img src="' . $customizations['images']['front'] . '" alt="Frente">';
 			echo '<img src="' . $customizations['images']['back'] . '" alt="Costas">';

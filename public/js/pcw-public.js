@@ -12,9 +12,9 @@ jQuery(document).ready(function ($)
 		productWrapper.html(`
 			<div id="canvas_container_${view}">
 				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
-				<div id="pcw_logo_container_${view}" class="pcw_logo_container logo-active" style="display: none">
+				<div id="pcw_logo_container_${view}" class="pcw_logo_container" style="display: none;">
 					<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
-					<div class="control-icons">
+					<div class="control-icons" style="display: none;">
 						<div class="pcw_icon move-icon"></div>
 						<div class="pcw_icon resize-icon top-left"></div>
 						<div class="pcw_icon resize-icon bottom-right"></div>
@@ -39,7 +39,7 @@ jQuery(document).ready(function ($)
 		productWrapper.find('a').hide(); // hide the original product image
 	}
 
-	$('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');
+	// $('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');
 
 	$(document).on('click', '.pcw_color', function ()
 	{
@@ -176,26 +176,20 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	$('.pcw_upload_drop_area').on('click', function() {
+	var $dropArea = $('.pcw_upload_drop_area');
+
+	$(document).on('click', '.pcw_upload_drop_area', function() {
 		// Reset the file input value to allow selecting the same file again
-		$(this).val('');
+		$(this).find('.pcw_upload_input').val('');
 	});
 
-	$('.pcw_upload_drop_area').on('change', function (event) {
-		var view = '';
-		if($(this).hasClass('front')) {
-			view = 'front';
-		} else if($(this).hasClass('back')) {
-			view = 'back';
-		}
+	$(document).on('change', '.pcw_upload_drop_area', function (event) {
+		var view = get_upload_view($(this))
 		var file = event.target.files[0];
 		if (file) {
 			uploadLogo(file, view);
 		}
 	});
-
-	var $dropArea = $('.pcw_upload_drop_area');
-	var $fileInput = $('.pcw_upload_input');
 
 	function get_upload_view(dropArea) {
 		if(dropArea.hasClass('front')) {
@@ -225,14 +219,6 @@ jQuery(document).ready(function ($)
 		var view = get_upload_view($(this));
 
 		var file = e.originalEvent.dataTransfer.files[0];
-		if (file) {
-			uploadLogo(file, view);
-		}
-	});
-
-	$fileInput.on('change', function (event) {
-		var view = get_upload_view($(this));
-		var file = event.target.files[0];
 		if (file) {
 			uploadLogo(file, view);
 		}
@@ -289,10 +275,12 @@ jQuery(document).ready(function ($)
 				$logoWrapper.attr('data-x', 0);
 				$logoWrapper.attr('data-y', 0);
 
-				$(`#pcw_logo_container_${view}`).find('.control-icons').show();
-				$(`#pcw_logo_container_${view}`).addClass('logo-active');
+				$logoWrapper.find('.control-icons').show();
 
-				console.log('Logo carregada e renderizada');
+				// Deslizar para o container da logo
+				var $gallery = $('.woocommerce-product-gallery');
+				var viewIndex = $(`.pcw_${view}`).index();
+				$gallery.find('.flex-control-nav li').eq(viewIndex).find('img').trigger('click');
 			};
 		};
 		reader.readAsDataURL(file);
@@ -302,15 +290,15 @@ jQuery(document).ready(function ($)
 		var $target = $(event.target);
 
 		// Check if the click was outside the logo container
-		if (!$target.closest('.pcw_logo_container').length && $('.pcw_logo_container').hasClass('logo-active')) {
+		if (!$target.closest('.pcw_logo_container').length && $('.pcw_logo_container').hasClass('active')) {
 			$('.pcw_logo_container .control-icons').fadeOut();
-			$('.pcw_logo_container').removeClass('logo-active');
+			$('.pcw_logo_container').removeClass('active');
 		}
 	});
 
 	$(document).on('click', '.pcw_logo_container', function () {
 		$(this).find('.control-icons').show();
-		$(this).addClass('logo-active');
+		$(this).addClass('active');
 	});
 
 	$(document).on('click', '.delete-icon', function () {
@@ -442,7 +430,7 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	$('#pcw_save_button').on('click', function() {
+	$(document).on('pcw_save_customizations', function() {
 		saveCustomizations();
 	});
 
@@ -462,25 +450,38 @@ jQuery(document).ready(function ($)
 		});
 
 		// Capturar as imagens dos containers
-		var capturePromises = ['front', 'back'].map(function (view) {
+		var imagePromises = ['front', 'back'].map(function (view) {
 			var container = document.querySelector(`#canvas_container_${view}`);
-			if (container) {
+			var canvas = document.querySelector(`#canvas_${view}`);
+			if (container && canvas) {
 				return new Promise(function(resolve, reject) {
-					domtoimage.toPng(container)
-						.then(function (dataUrl) {
-							customizations.images[view] = dataUrl;
-							resolve();
-						})
-						.catch(function (error) {
-							console.error('Error capturing image:', error);
-							resolve();
-						});
+					var originalWidth = parseInt(canvas.getAttribute('data-original-width'));
+					var originalHeight = parseInt(canvas.getAttribute('data-original-height'));
+
+					domtoimage.toPng(container, {
+						width: originalWidth,
+						height: originalHeight,
+						style: {
+							transform: 'scale(' + originalWidth / container.offsetWidth + ')',
+							transformOrigin: 'top left'
+						}
+					})
+					.then(function (dataUrl) {
+						customizations.images[view] = dataUrl;
+						resolve();
+					})
+					.catch(function (error) {
+						console.error('Erro ao capturar imagem:', error);
+						resolve();
+					});
 				});
+			} else {
+				return Promise.resolve();
 			}
 		});
 
-		// Esperar todas as capturas serem concluídas
-		Promise.all(capturePromises).then(() => {
+		// Esperar todas as imagens serem capturadas antes de continuar
+		Promise.all(imagePromises).then(function() {
 			// Disparar um evento personalizado com as customizações
 			$(document).trigger('pcw_customizations_updated', [customizations]);
 
@@ -502,11 +503,9 @@ jQuery(document).ready(function ($)
 					}
 				},
 				error: function (error) {
-					console.error('Ajax error:', error);
+					console.error('Erro Ajax:', error);
 				}
 			});
-		}).catch(error => {
-			console.error('Erro ao capturar as imagens:', error);
 		});
 	}
 });

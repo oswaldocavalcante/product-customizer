@@ -80,9 +80,8 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-pcw.php';
  *
  * @since    1.0.0
  */
-function run_pcw() {
-
+function run_pcw()
+{
 	$plugin = new Pcw();
-
 }
 run_pcw();

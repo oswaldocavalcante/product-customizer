@@ -22,38 +22,6 @@
  */
 class Pcw_Admin
 {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct($plugin_name, $version)
-	{
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-	}
-
 	function add_tab($tabs)
 	{
 		$tabs['customization'] = array(
@@ -68,8 +36,8 @@ class Pcw_Admin
 
 	public function add_panel()
 	{
-		wp_enqueue_style('pcw-admin', plugin_dir_url(__FILE__) . 'css/pcw-admin.css', array(), $this->version, 'all');
-		wp_enqueue_script('pcw-admin', plugin_dir_url(__FILE__) . 'js/pcw-admin.js', array('jquery'), $this->version, false);
+		wp_enqueue_style('pcw-admin', plugin_dir_url(__FILE__) . 'css/pcw-admin.css', array(), PCW_VERSION, 'all');
+		wp_enqueue_script('pcw-admin', plugin_dir_url(__FILE__) . 'js/pcw-admin.js', array('jquery'), PCW_VERSION, false);
 		wp_localize_script('pcw-admin', 'pcw_ajax_object', array(
 			'url'   => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('pcw_nonce'),

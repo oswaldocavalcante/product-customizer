@@ -177,8 +177,7 @@
     display: none;
 }
 
-#pcw_logo_container_front
-,#pcw_logo_container_back
+.pcw_logo_container
 {
     position: absolute;
     top: 0;
@@ -189,23 +188,19 @@
     border: 2px dashed transparent;
 }
 
-.logo-active
-{
-    border: 2px dashed #00FF00 !important;
-}
-
-#pcw_logo_canvas_front
-,#pcw_logo_canvas_back
+.pcw_logo_canvas
 {
     display: block;
     margin: 10px;
 }
 
 .control-icons {
+    position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none;
-    display: none;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #00FF00;
 }
 
 .pcw_icon {

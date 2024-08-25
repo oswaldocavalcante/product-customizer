@@ -27,26 +27,8 @@
  * @subpackage Pcw/includes
  * @author     Oswaldo Cavalcante <contato@oswaldocavalcante.com>
  */
-class Pcw {
-
-	/**
-	 * The unique identifier of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
-	 */
-	protected $plugin_name;
-
-	/**
-	 * The current version of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
-	 */
-	protected $version;
-
+class Pcw
+{
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -58,13 +40,6 @@ class Pcw {
 	 */
 	public function __construct()
 	{
-		if ( defined( 'PCW_VERSION' ) ) {
-			$this->version = PCW_VERSION;
-		} else {
-			$this->version = '1.0.0';
-		}
-		$this->plugin_name = 'pcw';
-
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
@@ -132,7 +107,7 @@ class Pcw {
 	 */
 	private function define_admin_hooks()
 	{
-		$plugin_admin = new Pcw_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Pcw_Admin();
 
 		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
 		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
@@ -152,7 +127,7 @@ class Pcw {
 	 */
 	private function define_public_hooks()
 	{
-		$plugin_public = new Pcw_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Pcw_Public();
 
 		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_script')			);
 		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'render_background'), 5);
@@ -163,28 +138,4 @@ class Pcw {
 		add_action('wp_ajax_pcw_save_customizations', 			array($plugin_public, 'save_customizations'));
 		add_action('wp_ajax_nopriv_pcw_save_customizations', 	array($plugin_public, 'save_customizations'));
 	}
-
-	/**
-	 * The name of the plugin used to uniquely identify it within the context of
-	 * WordPress and to define internationalization functionality.
-	 *
-	 * @since     1.0.0
-	 * @return    string    The name of the plugin.
-	 */
-	public function get_plugin_name() 
-	{
-		return $this->plugin_name;
-	}
-
-	/**
-	 * Retrieve the version number of the plugin.
-	 *
-	 * @since     1.0.0
-	 * @return    string    The version number of the plugin.
-	 */
-	public function get_version() 
-	{
-		return $this->version;
-	}
-
 }

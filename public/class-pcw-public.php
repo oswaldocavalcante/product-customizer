@@ -77,7 +77,7 @@ class Pcw_Public
 		$colors = get_post_meta(get_the_ID(), 'pcw_colors', true);
 		if (!empty($colors) && is_array($colors))
 		{
-			$colors_html = '<a class="pcw_color" style="background-color:#FFFFFF"></a>';
+			$colors_html = '';
 			foreach ($colors as $color)
 			{
 				$colors_html .= sprintf('<a class="pcw_color" title="%s" style="background-color:%s"></a>', $color['name'], $color['value']);

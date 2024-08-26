@@ -466,7 +466,7 @@ jQuery(document).ready(function ($)
 					logging: true,
 					onclone: function(clonedDoc) {
 						// Ajuste qualquer elemento no clone se necessário
-						var clonedContainer = clonedDoc.querySelector(`#canvas_container_${view}`);
+						// var clonedContainer = clonedDoc.querySelector(`#canvas_container_${view}`);
 						// Por exemplo, se houver elementos ocultos que precisam ser visíveis para a captura:
 						// clonedContainer.querySelectorAll('.hidden-element').forEach(el => el.style.display = 'block');
 					}

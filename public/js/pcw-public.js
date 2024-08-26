@@ -2,6 +2,7 @@ jQuery(document).ready(function ($)
 {
 	var productWrapperFront = $('.woocommerce-product-gallery__wrapper').children().eq(0);
 	var productWrapperBack = $('.woocommerce-product-gallery__wrapper').children().eq(1);
+	var defaultColor = $('#pcw_color_container').children().first().addClass('active');
 
 	setCanvas(productWrapperFront, 'front');
 	setTimeout(() => setCanvas(productWrapperBack, 'back'), 100); // Timeout due to WooCommerce script processing for second image
@@ -34,17 +35,24 @@ jQuery(document).ready(function ($)
 			canvas.setAttribute('data-original-width', this.width);
 			canvas.setAttribute('data-original-height', this.height);
 		};
-		render(document.getElementById(`canvas_${view}`));
+
+		render(document.getElementById(`canvas_${view}`), rgbToHex(defaultColor.css('background-color')));
 	}
 
 	// $('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');
 
 	$(document).on('click', '.pcw_color', function ()
 	{
+		$('.pcw_color').removeClass('active');
+		$(this).addClass('active');
+
 		var hexColor = rgbToHex($(this).css('background-color'));
-		
 		render(document.getElementById('canvas_front'), hexColor);
 		render(document.getElementById('canvas_back'), hexColor);
+	});
+
+	$(document).on('change', '.pcw-printing-method', function () {
+		updatePrice();
 	});
 
 	function render(canvas, hexColor = '#FFFFFF')
@@ -141,6 +149,7 @@ jQuery(document).ready(function ($)
 		$('.pcw_option').removeClass('active');
 		var $option = $(this).closest('.pcw_option');
 		$option.addClass('active');
+		updatePrice();
 
 		var optionId = $option.data('option-id');
 		var colorHex = rgbToHex($(this).css('background-color'));
@@ -435,6 +444,7 @@ jQuery(document).ready(function ($)
 
 	function saveCustomizations() {
 		$('.control-icons').hide();
+
 		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
 
 		var customizations = {
@@ -463,13 +473,7 @@ jQuery(document).ready(function ($)
 				html2canvas(container, {
 					useCORS: true,
 					allowTaint: true,
-					logging: true,
-					onclone: function(clonedDoc) {
-						// Ajuste qualquer elemento no clone se necessário
-						// var clonedContainer = clonedDoc.querySelector(`#canvas_container_${view}`);
-						// Por exemplo, se houver elementos ocultos que precisam ser visíveis para a captura:
-						// clonedContainer.querySelectorAll('.hidden-element').forEach(el => el.style.display = 'block');
-					}
+					logging: true
 				}).then(function(canvas) {
 					customizations.images[view] = canvas.toDataURL('image/png');
 					capturedViews++;
@@ -518,5 +522,30 @@ jQuery(document).ready(function ($)
 		});
 
 		$(document).trigger('pcw_customizations_updated', [customizations]);
+	}
+
+	function updatePrice() {
+		var basePrice = parseFloat($('.price .amount').first().text().replace(/[^0-9.-]+/g,""));
+		var additionalCost = 0;
+
+		// Calcular custo adicional das opções de camadas ativas
+		$('.pcw_option.active').each(function() {
+			additionalCost += parseFloat($(this).data('cost') || 0);
+		});
+
+		// Calcular custo adicional dos métodos de impressão selecionados
+		$('.pcw-printing-method').each(function() {
+			if ($(this).val()) {
+				additionalCost += parseFloat($(this).find('option:selected').data('cost') || 0);
+			}
+		});
+
+		var newPrice = basePrice + additionalCost;
+
+		// Atualizar o preço exibido
+		$('.price .amount').text(woocommerce_params.currency_symbol + newPrice.toFixed(2));
+
+		// Disparar um evento customizado com o novo preço
+		$(document).trigger('pcw_price_updated', [newPrice, additionalCost]);
 	}
 });

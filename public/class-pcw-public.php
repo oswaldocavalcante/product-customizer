@@ -80,7 +80,9 @@ class Pcw_Public
 			$colors_html = '';
 			foreach ($colors as $color)
 			{
-				$colors_html .= sprintf('<a class="pcw_color" title="%s" style="background-color:%s"></a>', $color['name'], $color['value']);
+				$colors_html .= sprintf('<a class="pcw_color" title="%s" style="background-color:%s"></a>', 
+				$color['name'], 
+				$color['value']);
 			}
 			echo '<div id="pcw_color_container">' . $colors_html . '</div>';
 		}

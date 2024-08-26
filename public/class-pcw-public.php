@@ -17,11 +17,14 @@ class Pcw_Public
 {
 	public function session_start()
 	{
-		if (is_user_logged_in() || is_admin()){
+		if (is_user_logged_in() || is_admin())
+		{
 			return;
 		}
-		if (isset(WC()->session)){
-			if (!WC()->session->has_session()){
+		if (isset(WC()->session))
+		{
+			if (!WC()->session->has_session())
+			{
 				WC()->session->set_customer_session_cookie(true);
 			}
 		}
@@ -34,7 +37,7 @@ class Pcw_Public
 		{
 			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
 			wp_enqueue_script('html2canvas', 'https://html2canvas.hertzen.com/dist/html2canvas.min.js', array(), '1.4.1', true);
-			
+
 			wp_enqueue_style('pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
 			wp_enqueue_script('pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'html2canvas'), PCW_VERSION, true);
 			wp_localize_script('pcw', 'pcw_ajax_object', array(
@@ -49,7 +52,7 @@ class Pcw_Public
 		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
 		if ($background)
 		{
-			?>
+		?>
 			<style>
 				.flex-viewport {
 					background-image: url('<?php echo esc_attr($background); ?>');
@@ -57,8 +60,16 @@ class Pcw_Public
 					background-position: center;
 				}
 			</style>
-			<?php
+		<?php
 		}
+	}
+
+	public function render_summary()
+	{
+		$this->render_colors();
+		$this->render_layers();
+		$this->render_uploads();
+		$this->render_disclaimer();
 	}
 
 	public function render_colors()
@@ -116,25 +127,54 @@ class Pcw_Public
 
 	public function render_uploads()
 	{
+		$printing_methods = get_post_meta(get_the_ID(), 'pcw_printing_methods', true);
+		$printing_methods_html = '';
+		foreach ($printing_methods as $printing_method)
+		{
+			$printing_methods_html .= sprintf(
+				'<option value="%s">%s %s</option>',
+				esc_attr($printing_method['id']),
+				esc_html($printing_method['name']),
+				$printing_method['cost'] ? wc_price($printing_method['cost']) : ''
+			);
+		}
 		?>
 		<div id="pcw_uploads_container">
 			<div class="pcw_upload_drop_area front" id="pcw_upload_front">
-				<p><strong>Frente</strong> <br> Solte sua logo aqui ou</p>
-				<label for="pcw_button_upload_front" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
-				<input type="file" id="pcw_button_upload_front" class="pcw_upload_input" accept="image/png, image/svg+xml, application/pdf">
+				<p><strong><?php _e('Front', 'pcw'); ?></strong> <br> <?php _e('Drop your logo here or', 'pcw'); ?></p>
+				<label for="pcw_button_upload_front" class="pcw_button_upload"><?php _e('Send image', 'pcw'); ?></label>
+				<input type="file" id="pcw_button_upload_front" class="pcw_upload_input" accept="image/*, application/pdf">
+				<select id="pcw_printing_method_front" class="pcw-printing-method">
+					<option value=""><?php _e('Select printing method', 'pcw'); ?></option>
+					<?php echo $printing_methods_html; ?>
+				</select>
 			</div>
 			<div class="pcw_upload_drop_area back" id="pcw_upload_back">
-				<p><strong>Costas</strong> <br> Solte sua arte aqui ou</p>
-				<label for="pcw_button_upload_back" class="pcw_button_upload"><?php _e('Enviar imagem', 'pcw'); ?></label>
-				<input type="file" id="pcw_button_upload_back" class="pcw_upload_input" accept="image/png, image/svg+xml, application/pdf">
+				<p><strong><?php _e('Back', 'pcw'); ?></strong> <br> <?php _e('Drop your art here or', 'pcw'); ?></p>
+				<label for="pcw_button_upload_back" class="pcw_button_upload"><?php _e('Send image', 'pcw'); ?></label>
+				<input type="file" id="pcw_button_upload_back" class="pcw_upload_input" accept="image/*, application/pdf">
+				<select id="pcw_printing_method_back" class="pcw-printing-method">
+					<option value=""><?php _e('Select printing method', 'pcw'); ?></option>
+					<?php echo $printing_methods_html; ?>
+				</select>
 			</div>
 		</div>
 		<?php
 	}
 
+	public function render_disclaimer()
+	{
+		$disclaimer = get_post_meta(get_the_ID(), 'pcw_disclaimer', true);
+		if ($disclaimer)
+		{
+			echo '<p id="pcw_disclaimer">*' . $disclaimer . '</p>';
+		}
+	}
+
 	public function save_customizations()
 	{
-		if (!isset($_POST['product_id']) || !isset($_POST['customizations'])) {
+		if (!isset($_POST['product_id']) || !isset($_POST['customizations']))
+		{
 			wp_send_json_error('Dados inválidos');
 		}
 

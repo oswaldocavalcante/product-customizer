@@ -1,4 +1,4 @@
-<div class="pcw-option" data-option-id="<%= optionId %>">
+<div class="pcw-option pcw-innerbox" data-option-id="<%= optionId %>">
     <input type="hidden" name="pcw_option[<%= layerId %>][]" value="<%= optionId %>" />
     <div class="pcw-option-images">
         <div class="pcw-option-image woocommerce_variable_attributes">
@@ -17,14 +17,14 @@
         </div>
     </div>
     <div class="pcw-option-inputs">
-        <input type="text" class="option_name" name="pcw_option_name[<%= layerId %>][]" value="<%= name %>" placeholder="Nome" required />
-        <input type="text" class="option_cost" name="pcw_option_cost[<%= layerId %>][]" value="<%= cost %>" placeholder="Custo R$" />
+        <input type="text" class="option_name" name="pcw_option_name[<%= layerId %>][]" value="<%= name %>" placeholder="Name" required />
+        <input type="text" class="option_cost" name="pcw_option_cost[<%= layerId %>][]" value="<%= cost %>" placeholder="Cost $" />
     </div>
     <div class="pcw-option-colors">
-        <a class="pcw_button_add_option_color button">+</a>
+        <a class="pcw_button_add_option_color button"><%= addNewColor %></a>
         <%= optionColors %>
     </div>
-    <div class="pcw_remove_option">
-        <span class="pcw_button_remove_option"></span>
+    <div class="pcw_remove_option pcw-delete">
+        <span class="pcw_button_remove_option pcw-button-delete"></span>
     </div>
 </div>

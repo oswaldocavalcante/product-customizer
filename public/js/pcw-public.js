@@ -223,6 +223,7 @@ jQuery(document).ready(function ($)
 	});
 
 	function uploadLogo(file, view) {
+		$('.pcw-printing-method').slideDown();
 		var reader = new FileReader();
 		reader.onload = function (e) {
 			var img = new Image();

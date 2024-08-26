@@ -21,6 +21,18 @@ jQuery(document).ready(function ($) {
 
         $('#pcw-metabox-content-colors').append(newColor);
     });
+
+    $(document).on('click', '#pcw_button_add_printing_method', function () {
+        var template = $('#pcw_printing_method_template').html();
+        var newPrintingMethod = template
+            .replace(/<%= id %>/g, generateUniqueId())
+            .replace(/<%= name %>/g, '')
+            .replace(/<%= cost %>/g, '')
+            .replace(/<%= description %>/g, '')
+        ;
+
+        $('#pcw-metabox-content-printing-methods').append(newPrintingMethod);
+    });
     
     $('#pwc_button_add_layer').on('click', function () {
 
@@ -32,9 +44,8 @@ jQuery(document).ready(function ($) {
         }
 
         var template = $('#pcw_layer_template').html();
-        var layerId = generateUniqueId();
         var newLayer = template
-            .replace(/<%= layerId %>/g, layerId)
+            .replace(/<%= layerId %>/g, generateUniqueId())
             .replace(/<%= layerName %>/g, layerName)
             .replace(/<%= layerOptions %>/g, '')
         ;
@@ -54,10 +65,11 @@ jQuery(document).ready(function ($) {
             .replace(/<%= imageBack %>/g, '')
             .replace(/<%= name %>/g, '')
             .replace(/<%= cost %>/g, '')
+            .replace(/<%= addNewColor %>/g, 'Add new color')
             .replace(/<%= optionColors %>/g, '')
         ;
 
-        var layerOptions = $(this).siblings('.pcw_layer_options');
+        var layerOptions = $(this).siblings('.pcw_metabox_options');
         layerOptions.append(newOption);
     });
 
@@ -129,33 +141,6 @@ jQuery(document).ready(function ($) {
         });
     });
 
-    $(document).on('click', '.pcw_button_remove_option', function (e) {
-        e.preventDefault();
-
-        if (confirm('Are you sure you want to delete this option?')) {
-            var postId = $('#post_ID').val();
-            var $option = $(this).closest('.pcw-option');
-            var optionId = $option.data('option-id');
-
-            $.ajax({
-                url: pcw_ajax_object.url,
-                type: 'POST',
-                data: {
-                    action: 'pcw_delete_option',
-                    nonce: pcw_ajax_object.nonce,
-                    post_id: postId,
-                    option_id: optionId
-                },
-                success: function (response) {
-                    $option.remove();
-                },
-                error: function (xhr, status, error) {
-                    alert('Failed to delete option.');
-                }
-            });
-        }
-    });
-
     $(document).on('click', '.pcw_button_remove_color', function (e) {
         e.preventDefault();
 
@@ -183,6 +168,33 @@ jQuery(document).ready(function ($) {
         }
     });
 
+    $(document).on('click', '.pcw_button_delete_printing_method', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this printing method?')) {
+            var postId = $('#post_ID').val();
+            var $printingMethod = $(this).closest('.pcw_printing_method');
+            var printingMethodId = $printingMethod.data('printing-method-id');
+
+            $.ajax({
+                url: pcw_ajax_object.url,
+                type: 'POST',
+                data: {
+                    action: 'pcw_delete_printing_method',
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    printing_method_id: printingMethodId
+                },
+                success: function (response) {
+                    $printingMethod.remove();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to delete printing method.');
+                }
+            });
+        }
+    });
+
     $(document).on('click', '.pcw_button_remove_layer', function (e) {
         e.preventDefault();
 
@@ -205,6 +217,33 @@ jQuery(document).ready(function ($) {
                 },
                 error: function (xhr, status, error) {
                     alert('Failed to delete layer.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.pcw_button_remove_option', function (e) {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this option?')) {
+            var postId = $('#post_ID').val();
+            var $option = $(this).closest('.pcw-option');
+            var optionId = $option.data('option-id');
+
+            $.ajax({
+                url: pcw_ajax_object.url,
+                type: 'POST',
+                data: {
+                    action: 'pcw_delete_option',
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    option_id: optionId
+                },
+                success: function (response) {
+                    $option.remove();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to delete option.');
                 }
             });
         }

@@ -7,6 +7,6 @@
     </h3>
     <div class="wc-metabox-content">
         <a class="pcw_button_add_option button">New option</a>
-        <div class="pcw_layer_options"><%= layerOptions %></div>
+        <div class="pcw_metabox_options"><%= layerOptions %></div>
     </div>
 </div>

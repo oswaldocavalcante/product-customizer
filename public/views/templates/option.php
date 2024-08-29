@@ -1,4 +1,4 @@
-<div class="pcw_option" data-option-id="<%= optionId %>">
+<div class="pcw_option" data-option-id="<%= optionId %>" data-option-cost="<%= optionCost %>">
     <p><%= optionName %></p>
     <p>R$ <%= optionCost %></p>
     <div class="pcw_option_colors"><%= optionColors %></div>

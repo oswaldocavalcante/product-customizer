@@ -149,7 +149,6 @@ jQuery(document).ready(function ($)
 		$('.pcw_option').removeClass('active');
 		var $option = $(this).closest('.pcw_option');
 		$option.addClass('active');
-		updatePrice();
 
 		var optionId = $option.data('option-id');
 		var colorHex = rgbToHex($(this).css('background-color'));
@@ -170,6 +169,7 @@ jQuery(document).ready(function ($)
 		render(optionCanvasBack[0], colorHex);
 
 		if($(this).hasClass('active')) {
+			$option.removeClass('active');
 			$(this).removeClass('active');
 			optionCanvasFront.fadeOut();
 			optionCanvasBack.fadeOut();
@@ -181,6 +181,8 @@ jQuery(document).ready(function ($)
 			optionCanvasFront.fadeIn();
 			optionCanvasBack.fadeIn();
 		}
+
+		updatePrice();
 	});
 
 	var $dropArea = $('.pcw_upload_drop_area');
@@ -438,6 +440,40 @@ jQuery(document).ready(function ($)
 		}
 	});
 
+	// Obter o preço base e converter corretamente
+	var basePriceText = $('.price .amount').first().text().trim();
+	var basePrice = parseFloat(basePriceText.replace(/[^\d,]/g, '').replace(',', '.'));
+	var additionalCost = 0;
+
+	function updatePrice() {
+
+		additionalCost = 0;
+
+		// Calcular custo adicional das opções de camadas ativas
+		$('.pcw_option_color.active').each(function () {
+			additionalCost += parseFloat($(this).closest('.pcw_option').data('option-cost') || 0);
+		});
+
+		// Calcular custo adicional dos métodos de impressão selecionados
+		$('.pcw-printing-method').each(function () {
+			if ($(this).val()) {
+				additionalCost += parseFloat($(this).find('option:selected').data('cost') || 0);
+			}
+		});
+
+		var newPrice = basePrice + additionalCost;
+
+		// Formatar o novo preço no estilo brasileiro
+		var formattedPrice = newPrice.toFixed(2).replace('.', ',');
+
+		// Atualizar o preço exibido
+		$('.price .amount').text(pcw_ajax_object.currency_symbol + ' ' + formattedPrice);
+
+		// Disparar um evento customizado com o novo preço
+		$(document).trigger('pcw_price_updated', [newPrice, additionalCost]);
+	}
+
+	// Used by external hooks
 	$(document).on('pcw_save_customizations', function() {
 		saveCustomizations();
 	});
@@ -448,6 +484,7 @@ jQuery(document).ready(function ($)
 		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
 
 		var customizations = {
+			cost: additionalCost,
 			color: $('.pcw_color.active').css('background-color'),
 			layers: {},
 			images: {}
@@ -522,30 +559,5 @@ jQuery(document).ready(function ($)
 		});
 
 		$(document).trigger('pcw_customizations_updated', [customizations]);
-	}
-
-	function updatePrice() {
-		var basePrice = parseFloat($('.price .amount').first().text().replace(/[^0-9.-]+/g,""));
-		var additionalCost = 0;
-
-		// Calcular custo adicional das opções de camadas ativas
-		$('.pcw_option.active').each(function() {
-			additionalCost += parseFloat($(this).data('cost') || 0);
-		});
-
-		// Calcular custo adicional dos métodos de impressão selecionados
-		$('.pcw-printing-method').each(function() {
-			if ($(this).val()) {
-				additionalCost += parseFloat($(this).find('option:selected').data('cost') || 0);
-			}
-		});
-
-		var newPrice = basePrice + additionalCost;
-
-		// Atualizar o preço exibido
-		$('.price .amount').text(woocommerce_params.currency_symbol + newPrice.toFixed(2));
-
-		// Disparar um evento customizado com o novo preço
-		$(document).trigger('pcw_price_updated', [newPrice, additionalCost]);
 	}
 });

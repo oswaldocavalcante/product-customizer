@@ -321,6 +321,15 @@
     color: #00FF00;
 }
 
+#pcw_notes
+{
+    width: 100%;
+    border-radius: 10px;
+    font-family: unset;
+    padding: 15px;
+    margin-top: 20px;
+}
+
 #pcw_disclaimer
 {
     font-size: 0.9em;

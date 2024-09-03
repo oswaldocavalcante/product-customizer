@@ -192,7 +192,8 @@ jQuery(document).ready(function ($)
 		$(this).find('.pcw_upload_input').val('');
 	});
 
-	$(document).on('change', '.pcw_upload_drop_area', function (event) {
+	$(document).on('change', '.pcw_upload_drop_area', function (event) 
+	{
 		var view = get_upload_view($(this))
 		var file = event.target.files[0];
 		if (file) {
@@ -200,7 +201,8 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	function get_upload_view(dropArea) {
+	function get_upload_view(dropArea) 
+	{
 		if(dropArea.hasClass('front')) {
 			return 'front';
 		} else if(dropArea.hasClass('back')) {
@@ -208,39 +210,49 @@ jQuery(document).ready(function ($)
 		}
 	}
 
-	$dropArea.on('dragenter dragover', function (e) {
+	$dropArea.on('dragenter dragover', function (e) 
+	{
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).addClass('highlight');
 	});
 
-	$dropArea.on('dragleave', function (e) {
+	$dropArea.on('dragleave', function (e) 
+	{
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).removeClass('highlight');
 	});
 
-	$dropArea.on('drop', function (e) {
+	$dropArea.on('drop', function (e) 
+	{
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).removeClass('highlight');
 
 		var view = get_upload_view($(this));
-
 		var file = e.originalEvent.dataTransfer.files[0];
 		if (file) {
 			uploadLogo(file, view);
 		}
 	});
 
-	function uploadLogo(file, view) {
+	var tempLogos = {};
+	function uploadLogo(file, view)
+	{
 		$('.pcw-printing-method').slideDown();
+
 		var reader = new FileReader();
-		reader.onload = function (e) {
+		reader.onload = function (e) 
+		{
 			var img = new Image();
 			img.src = e.target.result;
 
-			img.onload = function() {
+			img.onload = function() 
+			{
+				tempLogos[view] = {
+					file: file,
+				};
 				var $logoWrapper = $(`#pcw_logo_container_${view}`);
 				var $canvas = $(`#pcw_logo_canvas_${view}`);
 				var canvas = $canvas[0];
@@ -296,10 +308,10 @@ jQuery(document).ready(function ($)
 		reader.readAsDataURL(file);
 	}
 
+	// Check if the click was outside the logo container
 	$(document).on('click', function (event) {
 		var $target = $(event.target);
 
-		// Check if the click was outside the logo container
 		if (!$target.closest('.pcw_logo_container').length && $('.pcw_logo_container').hasClass('active')) {
 			$('.pcw_logo_container .control-icons').fadeOut();
 			$('.pcw_logo_container').removeClass('active');
@@ -462,8 +474,6 @@ jQuery(document).ready(function ($)
 		});
 
 		var newPrice = basePrice + additionalCost;
-
-		// Formatar o novo preço no estilo brasileiro
 		var formattedPrice = newPrice.toFixed(2).replace('.', ',');
 
 		// Atualizar o preço exibido
@@ -478,77 +488,94 @@ jQuery(document).ready(function ($)
 		saveCustomizations();
 	});
 
-	function saveCustomizations() {
+	async function saveCustomizations() {
 		$('.control-icons').hide();
-
-		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
 
 		var customizations = {
 			cost: additionalCost,
-			color: $('.pcw_color.active').css('background-color'),
+			color: {
+				name: $('.pcw_color.active').attr('title'),
+				value: $('.pcw_color.active').css('background-color')
+			},
 			layers: {},
-			images: {}
+			images: {},
+			printing_logos: {},
+			printing_methods: {
+				front: { methodId: $('#pcw_printing_method_front').val() },
+				back: { methodId: $('#pcw_printing_method_back').val() }
+			},
+			notes: $('#pcw_notes').val()
 		};
 
 		$('.pcw_layer').each(function () {
 			var layerId = $(this).data('layer-id');
 			customizations.layers[layerId] = {
-				option: $(this).find('.pcw_option.active').data('option-id'),
-				color: $(this).find('.pcw_option_color.active').css('background-color')
+				options: {}
 			};
-		});
 
-		var viewsToCapture = ['front', 'back'];
-		var capturedViews = 0;
+			$(this).find('.pcw_option').each(function () {
+				var optionId = $(this).data('option-id');
+				var activeColor = $(this).find('.pcw_option_color.active');
 
-		viewsToCapture.forEach(function (view) {
-			var container = document.querySelector(`#canvas_container_${view}`);
-			if (container) {
-				// Forçar um reflow para garantir que todas as mudanças foram aplicadas
-				container.offsetHeight;
-
-				html2canvas(container, {
-					useCORS: true,
-					allowTaint: true,
-					logging: true
-				}).then(function(canvas) {
-					customizations.images[view] = canvas.toDataURL('image/png');
-					capturedViews++;
-
-					if (capturedViews === viewsToCapture.length) {
-						sendCustomizationsToServer(customizations, product_id);
-					}
-				}).catch(function(error) {
-					console.error('Erro ao capturar imagem:', error);
-					capturedViews++;
-					if (capturedViews === viewsToCapture.length) {
-						sendCustomizationsToServer(customizations, product_id);
-					}
-				});
-			} else {
-				console.error(`Container para ${view} não encontrado`);
-				capturedViews++;
-				if (capturedViews === viewsToCapture.length) {
-					sendCustomizationsToServer(customizations, product_id);
+				if (activeColor.length > 0) {
+					var optionColorId = activeColor.data('option-color-id');
+					customizations.layers[layerId].options[optionId] = {
+						color: optionColorId
+					};
 				}
-			}
+			});
 		});
+
+		const viewsToCapture = ['front', 'back'];
+		await Promise.all(viewsToCapture.map(async function (view) 
+		{
+			var container = document.querySelector(`#canvas_container_${view}`);
+			container.offsetHeight; // Forçar um reflow para garantir que todas as mudanças foram aplicadas
+
+			await html2canvas(container, 
+			{
+				useCORS: true,
+				allowTaint: true,
+				imageTimeout: 0,
+			})
+			.then(function(canvas) {
+				customizations.images[view] = canvas.toDataURL('image/png');
+			})
+			.catch(function(error) {
+				console.error('Erro ao capturar imagem:', error);
+			});
+		}));
+
+		sendCustomizationsToServer(customizations);
 	}
 
-	function sendCustomizationsToServer(customizations, product_id) {
-		console.log('Customizações a serem enviadas:', customizations);
+	function sendCustomizationsToServer(customizations) 
+	{
+		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
+
+		var formData = new FormData();
+		formData.append('action', 'pcw_save_customizations');
+		formData.append('nonce', pcw_ajax_object.nonce);
+		formData.append('product_id', product_id);
+		formData.append('customizations', JSON.stringify(customizations));
+
+		if (tempLogos.front && tempLogos.front.file) {
+			formData.append('logo_front', tempLogos.front.file);
+		}
+		if (tempLogos.back && tempLogos.back.file) {
+			formData.append('logo_back', tempLogos.back.file);
+		}
+
 		$.ajax({
 			url: pcw_ajax_object.url,
 			type: 'POST',
-			data: {
-				action: 'pcw_save_customizations',
-				nonce: pcw_ajax_object.nonce,
-				product_id: product_id,
-				customizations: JSON.stringify(customizations),
-			},
-			success: function (response) {
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function (response) 
+			{
 				if (response.success) {
-					console.log('Customizações salvas com sucesso');
+					console.log(response.data);
 				} else {
 					console.error('Erro ao salvar customizações');
 				}

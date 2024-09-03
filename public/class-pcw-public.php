@@ -72,6 +72,7 @@ class Pcw_Public
 		$this->render_colors();
 		$this->render_layers();
 		$this->render_uploads();
+		$this->render_notes_field();
 		$this->render_disclaimer();
 	}
 
@@ -113,7 +114,7 @@ class Pcw_Public
 					$option_colors_html = '';
 					foreach ($option_data['colors'] as $color_data)
 					{
-						$option_colors_html .= sprintf('<span class="pcw_option_color" title="%s" style="background-color: %s"></span>', $color_data['name'], $color_data['value']);
+						$option_colors_html .= sprintf('<span class="pcw_option_color" data-option-color-id="%s" title="%s" style="background-color: %s"></span>', $color_data['id'], $color_data['name'], $color_data['value']);
 					}
 
 					$options_html .= str_replace(
@@ -174,6 +175,11 @@ class Pcw_Public
 		endif;
 	}
 
+	public function render_notes_field()
+	{
+		echo '<textarea id="pcw_notes" name="pcw_notes" placeholder="' . __('Write down notes to help us with your quote...', 'pcw') . '"></textarea>';
+	}
+
 	public function render_disclaimer()
 	{
 		$disclaimer = get_post_meta(get_the_ID(), 'pcw_disclaimer', true);
@@ -186,22 +192,46 @@ class Pcw_Public
 
 	public function save_customizations()
 	{
-		if (!isset($_POST['product_id']) || !isset($_POST['customizations']))
+		check_ajax_referer('pcw_nonce', 'nonce');
+
+		$product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+		$customizations = isset($_POST['customizations']) ? json_decode(stripslashes($_POST['customizations']), true) : array();
+
+		$upload_overrides = array(
+			'test_form' => false,
+			'mimes' 	=> array
+			(
+				'jpg|jpeg|jpe' => 'image/jpeg',
+				'png'          => 'image/png',
+				'gif'          => 'image/gif',
+				'pdf'          => 'application/pdf',
+			)
+		);
+
+		if (isset($_FILES['logo_front']))
 		{
-			wp_send_json_error('Dados inválidos');
+			$movefile = wp_handle_upload($_FILES['logo_front'], $upload_overrides);
+			if ($movefile && !isset($movefile['error'])) {
+				$customizations['printing_logos']['front'] = $movefile['url'];
+			}
+			else {
+				error_log('Error uploading front logo: ' . $movefile['error']);
+			}
 		}
 
-		$product_id = intval($_POST['product_id']);
-		$customizations = json_decode(stripslashes($_POST['customizations']), true);
+		if (isset($_FILES['logo_back']))
+		{
+			$movefile = wp_handle_upload($_FILES['logo_back'], $upload_overrides);
+			if ($movefile && !isset($movefile['error'])) {
+				$customizations['printing_logos']['back'] = $movefile['url'];
+			}
+			else {
+				error_log('Error uploading back logo: ' . $movefile['error']);
+			}
+		}
 
 		WC()->session->set("pcw_customizations_{$product_id}", $customizations);
 
-		do_action('pcw_customizations_updated', $customizations, $product_id);
-		wp_send_json_success('Customizações salvas com sucesso');
-	}
-
-	public function get_customizations($product_id)
-	{
-		return WC()->session->get("pcw_customizations_{$product_id}");
+		wp_send_json_success(__('Customizations saved successfully', 'pcw'));
 	}
 }

@@ -51,7 +51,6 @@ class Pcw
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Pcw_Loader. Orchestrates the hooks of the plugin.
 	 * - Pcw_i18n. Defines internationalization functionality.
 	 * - Pcw_Admin. Defines all hooks for the admin area.
 	 * - Pcw_Public. Defines all hooks for the public side of the site.

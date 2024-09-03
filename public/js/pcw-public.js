@@ -51,7 +51,8 @@ jQuery(document).ready(function ($)
 		render(document.getElementById('canvas_back'), hexColor);
 	});
 
-	$(document).on('change', '.pcw-printing-method', function () {
+	$(document).on('change', '.pcw-printing-method', function () 
+	{
 		updatePrice();
 	});
 
@@ -309,7 +310,8 @@ jQuery(document).ready(function ($)
 	}
 
 	// Check if the click was outside the logo container
-	$(document).on('click', function (event) {
+	$(document).on('click', function (event)
+	{
 		var $target = $(event.target);
 
 		if (!$target.closest('.pcw_logo_container').length && $('.pcw_logo_container').hasClass('active')) {
@@ -318,12 +320,14 @@ jQuery(document).ready(function ($)
 		}
 	});
 
-	$(document).on('click', '.pcw_logo_container', function () {
+	$(document).on('click', '.pcw_logo_container', function ()
+	{
 		$(this).find('.control-icons').show();
 		$(this).addClass('active');
 	});
 
-	$(document).on('click', '.delete-icon', function () {
+	$(document).on('click', '.delete-icon', function ()
+	{
 		var $logoWrapper = $(this).closest('.pcw_logo_container');
 		var $canvas = $logoWrapper.find('.pcw_logo_canvas');
 		var canvas = $canvas[0];
@@ -344,7 +348,8 @@ jQuery(document).ready(function ($)
 		$logoWrapper.attr('data-y', 0);
 	});
 
-	function resizeLogoWrapper(event, $wrapper, $canvas, direction) {
+	function resizeLogoWrapper(event, $wrapper, $canvas, direction)
+	{
 		var canvas = $canvas[0];
 		var ctx = canvas.getContext('2d');
 
@@ -395,7 +400,8 @@ jQuery(document).ready(function ($)
 		}
 	}
 
-	function setupResizeInteraction(selector, direction) {
+	function setupResizeInteraction(selector, direction) 
+	{
 		interact(selector).draggable({
 			onstart: function (event) {
 				var $wrapper = $(event.target).closest('.pcw_logo_container');
@@ -457,8 +463,8 @@ jQuery(document).ready(function ($)
 	var basePrice = parseFloat(basePriceText.replace(/[^\d,]/g, '').replace(',', '.'));
 	var additionalCost = 0;
 
-	function updatePrice() {
-
+	function updatePrice() 
+	{
 		additionalCost = 0;
 
 		// Calcular custo adicional das opções de camadas ativas
@@ -484,11 +490,13 @@ jQuery(document).ready(function ($)
 	}
 
 	// Used by external hooks
-	$(document).on('pcw_save_customizations', function() {
+	$(document).on('pcw_save_customizations', function() 
+	{
 		saveCustomizations();
 	});
 
-	async function saveCustomizations() {
+	async function saveCustomizations() 
+	{
 		$('.control-icons').hide();
 
 		var customizations = {
@@ -554,10 +562,10 @@ jQuery(document).ready(function ($)
 		var product_id = $('input[name="variation_id"]').val() || $('input[name="product_id"]').val();
 
 		var formData = new FormData();
-		formData.append('action', 'pcw_save_customizations');
-		formData.append('nonce', pcw_ajax_object.nonce);
-		formData.append('product_id', product_id);
-		formData.append('customizations', JSON.stringify(customizations));
+		formData.append('action', 			'pcw_save_customizations');
+		formData.append('nonce', 			pcw_ajax_object.nonce);
+		formData.append('product_id', 		product_id);
+		formData.append('customizations', 	JSON.stringify(customizations));
 
 		if (tempLogos.front && tempLogos.front.file) {
 			formData.append('logo_front', tempLogos.front.file);
@@ -566,7 +574,8 @@ jQuery(document).ready(function ($)
 			formData.append('logo_back', tempLogos.back.file);
 		}
 
-		$.ajax({
+		$.ajax
+		({
 			url: pcw_ajax_object.url,
 			type: 'POST',
 			data: formData,

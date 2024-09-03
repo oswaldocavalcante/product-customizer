@@ -194,10 +194,11 @@ class Pcw_Public
 	{
 		check_ajax_referer('pcw_nonce', 'nonce');
 
-		$product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+		$product_id 	= isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
 		$customizations = isset($_POST['customizations']) ? json_decode(stripslashes($_POST['customizations']), true) : array();
 
-		$upload_overrides = array(
+		$upload_overrides = array
+		(
 			'test_form' => false,
 			'mimes' 	=> array
 			(

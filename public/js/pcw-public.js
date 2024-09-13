@@ -4,15 +4,20 @@ jQuery(document).ready(function ($)
 	var productWrapperBack = $('.woocommerce-product-gallery__wrapper').children().eq(1);
 	var defaultColor = $('#pcw_color_container').children().first().addClass('active');
 
-	setCanvas(productWrapperFront, 'front');
-	setTimeout(() => setCanvas(productWrapperBack, 'back'), 100); // Timeout due to WooCommerce script processing for second image
+	if(productWrapperFront.length > 0) {
+		setCanvas(productWrapperFront, 'front');
+	}
+	if(productWrapperBack.length > 0) {
+		setTimeout(() => setCanvas(productWrapperBack, 'back'), 100); // Timeout due to WooCommerce script processing for second image
+	}
 
 	function setCanvas(productWrapper, view)
 	{
 		const originalImageURL = productWrapper.find('a').attr('href');
 
 		productWrapper.addClass(`pcw_${view}`);
-		productWrapper.html(`
+		productWrapper.html
+		(`
 			<div id="canvas_container_${view}">
 				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
 				<div id="pcw_logo_container_${view}" class="pcw_logo_container" style="display: none;">
@@ -31,7 +36,8 @@ jQuery(document).ready(function ($)
 		const canvas = document.getElementById(`canvas_${view}`);
 		const img = new Image();
 		img.src = originalImageURL;
-		img.onload = function() {
+		img.onload = function() 
+		{
 			canvas.setAttribute('data-original-width', this.width);
 			canvas.setAttribute('data-original-height', this.height);
 		};
@@ -509,8 +515,8 @@ jQuery(document).ready(function ($)
 			images: {},
 			printing_logos: {},
 			printing_methods: {
-				front: { methodId: $('#pcw_printing_method_front').val() },
-				back: { methodId: $('#pcw_printing_method_back').val() }
+				front: $('#pcw_printing_method_front').val(),
+				back: $('#pcw_printing_method_back').val()
 			},
 			notes: $('#pcw_notes').val()
 		};
@@ -534,7 +540,17 @@ jQuery(document).ready(function ($)
 			});
 		});
 
-		const viewsToCapture = ['front', 'back'];
+		var viewsToCapture = [];
+		$('.woocommerce-product-gallery__image').each(function () 
+		{
+			if($(this).hasClass('pcw_front')) {
+				viewsToCapture.push('front');
+			}
+			if($(this).hasClass('pcw_back')) {
+				viewsToCapture.push('back');
+			}
+		});
+
 		await Promise.all(viewsToCapture.map(async function (view) 
 		{
 			var container = document.querySelector(`#canvas_container_${view}`);

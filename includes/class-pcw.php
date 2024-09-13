@@ -107,15 +107,17 @@ class Pcw
 	private function define_admin_hooks()
 	{
 		$plugin_admin = new Pcw_Admin();
-
-		add_filter('woocommerce_product_data_tabs', 		array($plugin_admin, 'add_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
-		add_action('woocommerce_product_data_panels', 		array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
-		add_action('woocommerce_process_product_meta', 		array($plugin_admin, 'save')); // Salva os dados da aba de personalização
 		
-		add_action('wp_ajax_pcw_delete_color', 				array($plugin_admin, 'delete_color_callback'));
-		add_action('wp_ajax_pcw_delete_printing_method', 	array($plugin_admin, 'delete_printing_method_callback'));
-		add_action('wp_ajax_pcw_delete_layer', 				array($plugin_admin, 'delete_layer_callback'));
-		add_action('wp_ajax_pcw_delete_option', 			array($plugin_admin, 'delete_option_callback'));
+		add_filter('woocommerce_integrations', 			array($plugin_admin, 'add_woocommerce_integration'));
+		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
+		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
+		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save')); // Saves the data from the customization tab
+		
+		add_action('wp_ajax_pcw_delete_color', 			array($plugin_admin, 'delete_color_callback'));
+		add_action('wp_ajax_pcw_delete_printing_method',array($plugin_admin, 'delete_printing_method_callback'));
+		add_action('wp_ajax_pcw_delete_layer', 			array($plugin_admin, 'delete_layer_callback'));
+		add_action('wp_ajax_pcw_delete_option', 		array($plugin_admin, 'delete_option_callback'));
+		add_action('wp_ajax_pcw_delete_option_color', 	array($plugin_admin, 'delete_option_color_callback'));
 	}
 
 	/**
@@ -130,9 +132,9 @@ class Pcw
 		$plugin_public = new Pcw_Public();
 
 		add_action('woocommerce_init', 							array($plugin_public, 'session_start'), 	1);
-		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_script')			);
+		add_action('woocommerce_after_single_product', 			array($plugin_public, 'add_scripts')		);
 		add_action('woocommerce_before_single_product_summary', array($plugin_public, 'render_background'), 5);
-		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_summary'), 	40);
+		add_action('woocommerce_single_product_summary', 		array($plugin_public, 'render_customizations'), 	40);
 
 		add_action('wp_ajax_pcw_save_customizations', 			array($plugin_public, 'save_customizations'));
 		add_action('wp_ajax_nopriv_pcw_save_customizations', 	array($plugin_public, 'save_customizations'));

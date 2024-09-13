@@ -19,6 +19,11 @@
     margin-bottom: 20px;
 }
 
+#pcw-notes
+{
+    margin-left: 40px;
+}
+
 #pcw-metabox-background .pcw_button_upload_image {
     float: none;
     margin: auto;
@@ -203,6 +208,13 @@
     margin-right: 5px;
 }
 
+.pcw_option_color 
+{
+    border-radius: 5px;
+    border: 1px solid #2271b1;
+    overflow: hidden;
+}
+
 .pcw-option-inputs
 ,.pcw-option-colors
 {
@@ -218,8 +230,30 @@
     float: right;
 }
 
-.pcw_option_color {
-    border-radius: 5px;
-    border: 1px solid #2271b1;
-    overflow: hidden;
+.pcw_remove_option_color
+{
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+}
+
+.pcw_remove_option_color:hover
+{
+    opacity: 100%;
+    cursor: pointer;
+}
+
+.pcw_button_remove_option_color 
+{
+    width: 60px;
+    height: 60px;
+    display: block;
+}
+
+.pcw_button_remove_option_color::before
+{
+    font-size: 60px;
+    line-height: 60px;
+    font-family: Dashicons;
+    content: '\f335';
 }

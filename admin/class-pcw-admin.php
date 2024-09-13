@@ -22,9 +22,18 @@
  */
 class Pcw_Admin
 {
+	public function add_woocommerce_integration($integrations)
+	{
+		require_once PCW_ABSPATH . 'includes/class-pcw-integration.php';
+		$integrations[] = 'PCW_Integration';
+
+		return $integrations;
+	}
+
 	function add_tab($tabs)
 	{
-		$tabs['customization'] = array(
+		$tabs['customization'] = array
+		(
 			'label'    => __('Customizations', 'pcw'),
 			'target'   => 'pcw_metaboxes_wrapper',
 			'class'    => array('show_if_simple', 'show_if_variable'),
@@ -38,10 +47,12 @@ class Pcw_Admin
 	{
 		wp_enqueue_style('pcw-admin', plugin_dir_url(__FILE__) . 'css/pcw-admin.css', array(), PCW_VERSION, 'all');
 		wp_enqueue_script('pcw-admin', plugin_dir_url(__FILE__) . 'js/pcw-admin.js', array('jquery'), PCW_VERSION, false);
-		wp_localize_script('pcw-admin', 'pcw_ajax_object', array(
-			'url'   => admin_url('admin-ajax.php'),
-			'nonce' => wp_create_nonce('pcw_nonce'),
-		));
+		wp_localize_script('pcw-admin', 'pcw_ajax_object', array
+			(
+				'url'   => admin_url('admin-ajax.php'),
+				'nonce' => wp_create_nonce('pcw_nonce'),
+			)
+		);
 
 		?>
 		<div id="pcw_metaboxes_wrapper" class="panel wc-metaboxes-wrapper">
@@ -59,26 +70,19 @@ class Pcw_Admin
 				<div class="actions">
 					<input type="text" id="pwc_new_option_name" placeholder="<?php esc_html_e('Enter customization', 'pcw'); ?>" />
 					<button type="button" id="pwc_button_add_layer" class="button"><?php esc_html_e('Add new', 'woocommerce'); ?></button>
+					
+					<?php $pcw_notes = get_post_meta(get_the_ID(), 'pcw_notes', true); ?>
+					<input type="checkbox" id="pcw-notes" name="pcw_notes" <?php checked($pcw_notes, 'yes'); ?> />
+					<label for="pcw-notes"><?php esc_html_e('Enable customer notes', 'pcw'); ?></label>
 				</div>
 			</div>
 
 			<div id="pcw-metaboxes" class="wc-metaboxes ui-sortable">
-
-				<!-- Background -->
 				<?php $this->render_metabox_background(); ?>
-
-				<!-- Colors -->
 				<?php $this->render_metabox_colors(); ?>
-
-				<!-- Printing Methods -->
 				<?php $this->render_metabox_printing_methods(); ?>
-
-				<!-- Disclaimer -->
 				<?php $this->render_metabox_disclaimer(); ?>
-
-				<!-- Layers -->
 				<?php $this->render_metabox_layers(); ?>
-
 			</div>
 
 			<div class="toolbar toolbar-buttons">
@@ -301,30 +305,24 @@ class Pcw_Admin
 	public function save($post_id)
 	{
 		// Verifica se é um autosave para evitar sobrescrever dados
-		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE)
-		{
+		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
 			return;
 		}
 
-		if (!current_user_can('edit_post', $post_id))
-		{
+		if (!current_user_can('edit_post', $post_id)) {
 			return;
 		}
 
-		if ('product' !== get_post_type($post_id))
-		{
+		if ('product' !== get_post_type($post_id)) {
 			return;
 		}
 
 		$this->save_background($post_id);
-
 		$this->save_colors($post_id);
-
 		$this->save_printing_methods($post_id);
-
 		$this->save_disclaimer($post_id);
-
 		$this->save_layers($post_id);
+		$this->save_notes($post_id);
 	}
 
 	private function save_background($post_id)
@@ -333,10 +331,8 @@ class Pcw_Admin
 		{
 			$pcw_background = sanitize_text_field($_POST['pcw_background']);
 
-			// Salva o background como meta dados
 			$old_background = get_post_meta($post_id, 'pcw_background', true);
-			if ($old_background !== $pcw_background)
-			{
+			if ($old_background !== $pcw_background) {
 				update_post_meta($post_id, 'pcw_background', $pcw_background);
 			}
 		}
@@ -478,6 +474,12 @@ class Pcw_Admin
 		}
 	}
 
+	private function save_notes($post_id)
+	{
+		$pcw_notes = isset($_POST['pcw_notes']) ? 'yes' : null;
+		update_post_meta($post_id, 'pcw_notes', $pcw_notes);
+	}
+
 	function delete_color_callback()
 	{
 		if (!current_user_can('edit_posts'))
@@ -593,14 +595,12 @@ class Pcw_Admin
 
 	function delete_option_callback()
 	{
-		// Verifica as permissões do usuário
 		if (!current_user_can('edit_posts'))
 		{
 			wp_send_json_error('No permission');
 			return;
 		}
 
-		// Verifica se o ID da opção foi passado
 		if (isset($_POST['option_id']))
 		{
 			$post_id 	= sanitize_text_field($_POST['post_id']);
@@ -611,12 +611,12 @@ class Pcw_Admin
 			{
 				foreach ($pcw_layers as &$layer)
 				{
-					// Filtrar as opções para remover a opção com o ID fornecido
 					$layer['options'] = array_filter($layer['options'], function ($option) use ($option_id)
 					{
 						return $option['id'] != $option_id;
 					});
 				}
+
 				update_post_meta($post_id, 'pcw_layers', $pcw_layers);
 				wp_send_json_success('Option deleted');
 			}
@@ -630,6 +630,55 @@ class Pcw_Admin
 			wp_send_json_error('No option ID specified');
 		}
 
-		wp_die(); // Termina a execução do script
+		wp_die();
+	}
+
+	function delete_option_color_callback()
+	{
+		if (!current_user_can('edit_posts'))
+		{
+			wp_send_json_error('No permission');
+			return;
+		}
+
+		if (isset($_POST['option_id']))
+		{
+			$post_id 		 = sanitize_text_field($_POST['post_id']);
+			$option_id 		 = sanitize_text_field($_POST['option_id']);
+			$option_color_id = sanitize_text_field($_POST['option_color_id']);
+
+			$pcw_layers = get_post_meta($post_id, 'pcw_layers', true); // Obter as camadas salvas
+			if (!empty($pcw_layers) && is_array($pcw_layers))
+			{
+				foreach($pcw_layers as &$layer)
+				{
+					foreach($layer['options'] as &$option)
+					{
+						if($option['id'] == $option_id)
+						{
+							$option['colors'] = array_filter($option['colors'], function ($color) use ($option_color_id)
+							{
+								return ($option_color_id != $color['id']);
+							});
+
+							break;
+						}
+					}
+				}
+
+				update_post_meta($post_id, 'pcw_layers', $pcw_layers);
+				wp_send_json_success('Color option deleted');
+			}
+			else
+			{
+				wp_send_json_error('No color found');
+			}
+		}
+		else
+		{
+			wp_send_json_error('No option ID specified');
+		}
+
+		wp_die();
 	}
 }

@@ -1,10 +1,11 @@
-jQuery(document).ready(function ($) {
-
+jQuery(document).ready(function ($) 
+{
     function generateUniqueId() {
         return Math.random().toString(36);
     }
 
-    $(document).on('click', '#pcw_button_add_color', function () {
+    $(document).on('click', '#pcw_button_add_color', function () 
+    {
         var colorValue = $('#pcw_new_color_value').val();
         var colorName = $('#pcw_new_color_name').val();
         var template = $('#pcw_color_template').html();
@@ -22,7 +23,8 @@ jQuery(document).ready(function ($) {
         $('#pcw-metabox-content-colors').append(newColor);
     });
 
-    $(document).on('click', '#pcw_button_add_printing_method', function () {
+    $(document).on('click', '#pcw_button_add_printing_method', function () 
+    {
         var template = $('#pcw_printing_method_template').html();
         var newPrintingMethod = template
             .replace(/<%= id %>/g, generateUniqueId())
@@ -34,8 +36,8 @@ jQuery(document).ready(function ($) {
         $('#pcw-metabox-content-printing-methods').append(newPrintingMethod);
     });
     
-    $('#pwc_button_add_layer').on('click', function () {
-
+    $('#pwc_button_add_layer').on('click', function () 
+    {
         var layerName = $('#pwc_new_option_name').val().trim();
 
         if (layerName === '') {
@@ -89,13 +91,15 @@ jQuery(document).ready(function ($) {
     });
 
     // Ação para carregar imagem
-    $(document).on('click', '.pcw_button_upload_image', function (e) {
+    $(document).on('click', '.pcw_button_upload_image', function (e) 
+    {
         e.preventDefault();
 
         var $button = $(this);
         var $input = $button.siblings('.pcw_upload_image');
 
-        if ($input.val()) {
+        if ($input.val()) 
+        {
             $input.val('');
             $button.html('');
             $button.removeClass('remove');
@@ -103,12 +107,14 @@ jQuery(document).ready(function ($) {
         }
 
         // Cria o media frame
-        if (frame) {
+        if (frame) 
+        {
             frame.open();
             return;
         }
 
-        var frame = wp.media({
+        var frame = wp.media
+        ({
             title: 'Select or Upload an Image',
             button: {
                 text: 'Use this image'
@@ -117,7 +123,8 @@ jQuery(document).ready(function ($) {
         });
 
         // Quando uma imagem é selecionada
-        frame.on('select', function () {
+        frame.on('select', function () 
+        {
             var attachment = frame.state().get('selection').first().toJSON();
             $input.val(attachment.url);
             $button.html('<img src="' + attachment.url + '" class="pcw_uploaded_image" style="display: block">');
@@ -222,18 +229,22 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    $(document).on('click', '.pcw_button_remove_option', function (e) {
+    $(document).on('click', '.pcw_button_remove_option', function (e) 
+    {
         e.preventDefault();
 
-        if (confirm('Are you sure you want to delete this option?')) {
+        if (confirm('Are you sure you want to delete this option?')) 
+        {
             var postId = $('#post_ID').val();
             var $option = $(this).closest('.pcw-option');
             var optionId = $option.data('option-id');
 
-            $.ajax({
+            $.ajax
+            ({
                 url: pcw_ajax_object.url,
                 type: 'POST',
-                data: {
+                data: 
+                {
                     action: 'pcw_delete_option',
                     nonce: pcw_ajax_object.nonce,
                     post_id: postId,
@@ -241,6 +252,40 @@ jQuery(document).ready(function ($) {
                 },
                 success: function (response) {
                     $option.remove();
+                },
+                error: function (xhr, status, error) {
+                    alert('Failed to delete option.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.pcw_button_remove_option_color', function (e) 
+    {
+        e.preventDefault();
+
+        if (confirm('Are you sure you want to delete this option color?')) 
+        {
+            var postId          = $('#post_ID').val();
+            var $option         = $(this).closest('.pcw-option');
+            var optionId        = $option.data('option-id');
+            var $optionColor    = $(this).closest('.pcw_option_color');
+            var optionColorId   = $optionColor.data('option-color-id');
+
+            $.ajax
+            ({
+                url: pcw_ajax_object.url,
+                type: 'POST',
+                data:
+                {
+                    action: 'pcw_delete_option_color',
+                    nonce: pcw_ajax_object.nonce,
+                    post_id: postId,
+                    option_id: optionId,
+                    option_color_id: optionColorId,
+                },
+                success: function (response) {
+                    $optionColor.remove();
                 },
                 error: function (xhr, status, error) {
                     alert('Failed to delete option.');

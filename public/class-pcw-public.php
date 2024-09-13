@@ -17,25 +17,22 @@ class Pcw_Public
 {
 	public function session_start()
 	{
-		if (is_user_logged_in() || is_admin())
-		{
+		if (is_user_logged_in() || is_admin()) {
 			return;
 		}
 		if (isset(WC()->session))
 		{
-			if (!WC()->session->has_session())
-			{
+			if (!WC()->session->has_session()) {
 				WC()->session->set_customer_session_cookie(true);
 			}
 		}
 	}
 
-	public function add_script()
+	public function add_scripts()
 	{
 		$wc_product = wc_get_product(get_the_ID());
-		$layers_data = get_post_meta(get_the_ID(), 'pcw_layers', true);
 
-		if ($wc_product->is_on_backorder() && !empty($layers_data) && is_array($layers_data))
+		if ($wc_product->is_on_backorder())
 		{
 			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
 			wp_enqueue_script('html2canvas', 'https://html2canvas.hertzen.com/dist/html2canvas.min.js', array(), '1.4.1', true);
@@ -53,21 +50,24 @@ class Pcw_Public
 	public function render_background()
 	{
 		$background = get_post_meta(get_the_ID(), 'pcw_background', true);
+		$background = $background ? $background : get_option('pcw-settings-background');
 
 		if ($background) :
-			?>
+		?>
 			<style>
-				.flex-viewport {
+				.flex-viewport
+				,.woocommerce-product-gallery__wrapper
+				{
 					background-image: url('<?php echo esc_attr($background); ?>');
 					background-size: cover;
 					background-position: center;
 				}
 			</style>
-			<?php
+		<?php
 		endif;
 	}
 
-	public function render_summary()
+	public function render_customizations()
 	{
 		$this->render_colors();
 		$this->render_layers();
@@ -79,15 +79,18 @@ class Pcw_Public
 	public function render_colors()
 	{
 		$colors = get_post_meta(get_the_ID(), 'pcw_colors', true);
+		$colors = $colors ? $colors : get_option('pcw-settings-colors');
 
 		if (!empty($colors) && is_array($colors))
 		{
 			$colors_html = '';
 			foreach ($colors as $color)
 			{
-				$colors_html .= sprintf('<a class="pcw_color" title="%s" style="background-color:%s"></a>', 
-				$color['name'], 
-				$color['value']);
+				$colors_html .= sprintf(
+					'<a class="pcw_color" title="%s" style="background-color:%s"></a>',
+					$color['name'],
+					$color['value']
+				);
 			}
 			echo '<div id="pcw_color_container">' . $colors_html . '</div>';
 		}
@@ -136,21 +139,22 @@ class Pcw_Public
 	public function render_uploads()
 	{
 		$printing_methods = get_post_meta(get_the_ID(), 'pcw_printing_methods', true);
+		$printing_methods = $printing_methods ? $printing_methods : get_option('pcw-settings-printings');
 
 		if (!empty($printing_methods) && is_array($printing_methods)) :
-		
+
 			$printing_methods_html = '';
 			foreach ($printing_methods as $printing_method)
 			{
 				$printing_methods_html .= sprintf(
 					'<option value="%s" data-cost="%s">%s %s</option>',
-					esc_attr($printing_method['id']),
+					esc_attr(isset($printing_method['id']) ? $printing_method['id'] : uniqid('printing_method_', true)),
 					esc_html($printing_method['cost']),
 					esc_html($printing_method['name']),
 					$printing_method['cost'] ? wc_price($printing_method['cost']) : ''
 				);
 			}
-			?>
+		?>
 			<div id="pcw_uploads_container">
 				<div class="pcw_upload_drop_area front" id="pcw_upload_front">
 					<p><strong><?php _e('Front', 'pcw'); ?></strong> <br> <?php _e('Drop your logo here or', 'pcw'); ?></p>
@@ -171,19 +175,26 @@ class Pcw_Public
 					</select>
 				</div>
 			</div>
-			<?php
+		<?php
 		endif;
 	}
 
 	public function render_notes_field()
 	{
-		echo '<textarea id="pcw_notes" name="pcw_notes" placeholder="' . __('Write down notes to help us with your quote...', 'pcw') . '"></textarea>';
+		$pcw_notes = get_post_meta(get_the_ID(), 'pcw_notes', true);
+		$pcw_notes = $pcw_notes ? $pcw_notes : get_option('pcw-settings-notes');
+
+		if ($pcw_notes == 'yes')
+		{
+			echo '<textarea id="pcw_notes" name="pcw_notes" placeholder="' . __('Write down notes to help us with your quote...', 'pcw') . '"></textarea>';
+		}
 	}
 
 	public function render_disclaimer()
 	{
 		$disclaimer = get_post_meta(get_the_ID(), 'pcw_disclaimer', true);
-		
+		$disclaimer = $disclaimer ? $disclaimer : get_option('pcw-settings-disclaimer');
+
 		if ($disclaimer)
 		{
 			echo '<p id="pcw_disclaimer">*' . $disclaimer . '</p>';
@@ -197,11 +208,9 @@ class Pcw_Public
 		$product_id 	= isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
 		$customizations = isset($_POST['customizations']) ? json_decode(stripslashes($_POST['customizations']), true) : array();
 
-		$upload_overrides = array
-		(
+		$upload_overrides = array(
 			'test_form' => false,
-			'mimes' 	=> array
-			(
+			'mimes' 	=> array(
 				'jpg|jpeg|jpe' => 'image/jpeg',
 				'png'          => 'image/png',
 				'gif'          => 'image/gif',
@@ -212,10 +221,12 @@ class Pcw_Public
 		if (isset($_FILES['logo_front']))
 		{
 			$movefile = wp_handle_upload($_FILES['logo_front'], $upload_overrides);
-			if ($movefile && !isset($movefile['error'])) {
+			if ($movefile && !isset($movefile['error']))
+			{
 				$customizations['printing_logos']['front'] = $movefile['url'];
 			}
-			else {
+			else
+			{
 				error_log('Error uploading front logo: ' . $movefile['error']);
 			}
 		}
@@ -223,10 +234,12 @@ class Pcw_Public
 		if (isset($_FILES['logo_back']))
 		{
 			$movefile = wp_handle_upload($_FILES['logo_back'], $upload_overrides);
-			if ($movefile && !isset($movefile['error'])) {
+			if ($movefile && !isset($movefile['error']))
+			{
 				$customizations['printing_logos']['back'] = $movefile['url'];
 			}
-			else {
+			else
+			{
 				error_log('Error uploading back logo: ' . $movefile['error']);
 			}
 		}

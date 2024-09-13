@@ -3,6 +3,6 @@
     <input type="text" name="pcw_option_color_value[<%= optionId %>][]" value="<%= optionColorValue %>" placeholder="Color value" />
     <input type="text" name="pcw_option_color_name[<%= optionId %>][]" value="<%= optionColorName %>" placeholder="Color name" />
     <div class="pcw_remove_option_color">
-        <span class="pcw_button_remove_option_color"></span>
+        <a class="pcw_button_remove_option_color"></a>
     </div>
 </div>

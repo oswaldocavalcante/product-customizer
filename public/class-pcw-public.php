@@ -36,6 +36,8 @@ class Pcw_Public
 		{
 			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
 			wp_enqueue_script('html2canvas', 'https://html2canvas.hertzen.com/dist/html2canvas.min.js', array(), '1.4.1', true);
+			wp_enqueue_script('wp-color-picker');
+			wp_enqueue_style('wp-color-picker');
 
 			wp_enqueue_style('pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
 			wp_enqueue_script('pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'html2canvas'), PCW_VERSION, true);
@@ -92,6 +94,7 @@ class Pcw_Public
 					$color['value']
 				);
 			}
+
 			echo '<div id="pcw_color_container">' . $colors_html . '</div>';
 		}
 	}
@@ -115,12 +118,20 @@ class Pcw_Public
 				{
 
 					$option_colors_html = '';
-					foreach ($option_data['colors'] as $color_data)
+					$option_colors_data = $option_data['colors'] ? $option_data['colors'] : get_option('pcw-settings-colors');
+					foreach ($option_colors_data as $color_data)
 					{
-						$option_colors_html .= sprintf('<span class="pcw_option_color" data-option-color-id="%s" title="%s" style="background-color: %s"></span>', $color_data['id'], $color_data['name'], $color_data['value']);
+						$option_colors_html .= sprintf
+						(
+							'<span class="pcw_option_color" data-option-color-id="%s" title="%s" style="background-color: %s"></span>', 
+							$color_data['id'],
+							$color_data['name'],
+							$color_data['value']
+						);
 					}
 
-					$options_html .= str_replace(
+					$options_html .= str_replace
+					(
 						array('<%= optionId %>',	'<%= optionName %>', 	'<%= optionCost %>', 	'<%= optionColors %>', 	'<%= imageFront %>', 				'<%= imageBack %>'),
 						array($option_data['id'], 	$option_data['name'], 	$option_data['cost'], 	$option_colors_html, 	$option_data['images']['front'], 	$option_data['images']['back']),
 						file_get_contents($option_template_path)
@@ -146,7 +157,8 @@ class Pcw_Public
 			$printing_methods_html = '';
 			foreach ($printing_methods as $printing_method)
 			{
-				$printing_methods_html .= sprintf(
+				$printing_methods_html .= sprintf
+				(
 					'<option value="%s" data-cost="%s">%s %s</option>',
 					esc_attr(isset($printing_method['id']) ? $printing_method['id'] : uniqid('printing_method_', true)),
 					esc_html($printing_method['cost']),

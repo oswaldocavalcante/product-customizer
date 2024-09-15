@@ -55,7 +55,7 @@
 
 .pcw_option
 {
-    padding: 10px 15px;
+    padding: 10px 15px 15px;
     border: 1px solid #ddd;
     border-radius: 7px;
     display: flex;
@@ -63,6 +63,7 @@
     gap: 5px;
     background-color: #fff;
     transition: 0.3s ease-out;
+    max-width: 140px;
 }
 
 .pcw_option:hover
@@ -81,6 +82,7 @@
 {
     display: flex;
     gap: 3px;
+    flex-wrap: wrap;
 }
 
 .pcw_option_color

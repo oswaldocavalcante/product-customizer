@@ -85,7 +85,12 @@ class PCW_Integration extends WC_Integration
         foreach ($option_lines as $option)
         {
             list($name, $value) = array_map('trim', explode(',', $option));
-            $formatted_option[] = array($key_name => $name, $value_name => $value);
+            $formatted_option[] = array
+            (
+                'id'        => uniqid('default_', true),
+                $key_name   => $name, 
+                $value_name => $value
+            );
         }
 
         return $formatted_option;

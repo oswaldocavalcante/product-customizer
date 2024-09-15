@@ -109,9 +109,9 @@ class Pcw
 		$plugin_admin = new Pcw_Admin();
 		
 		add_filter('woocommerce_integrations', 			array($plugin_admin, 'add_woocommerce_integration'));
-		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab')); // Adiciona a aba de personalização na metabox "Dados do produto"
-		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel')); // Adiciona o conteúdo da aba de personalização
-		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save')); // Saves the data from the customization tab
+		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab'));
+		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel'));
+		add_action('woocommerce_process_product_meta', 	array($plugin_admin, 'save'));
 		
 		add_action('wp_ajax_pcw_delete_color', 			array($plugin_admin, 'delete_color_callback'));
 		add_action('wp_ajax_pcw_delete_printing_method',array($plugin_admin, 'delete_printing_method_callback'));

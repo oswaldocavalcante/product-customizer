@@ -73,11 +73,16 @@ class Pcw_Public
 
 	public function render_customizations()
 	{
-		$this->render_colors();
-		$this->render_layers();
-		$this->render_uploads();
-		$this->render_notes_field();
-		$this->render_disclaimer();
+		$product = wc_get_product(the_ID());
+		
+		if($product && $product->is_on_backorder())
+		{
+			$this->render_colors();
+			$this->render_layers();
+			$this->render_uploads();
+			$this->render_notes_field();
+			$this->render_disclaimer();
+		}
 	}
 
 	public function render_colors()

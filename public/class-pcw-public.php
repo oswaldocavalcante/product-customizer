@@ -73,7 +73,7 @@ class Pcw_Public
 
 	public function render_customizations()
 	{
-		$product = wc_get_product(the_ID());
+		$product = wc_get_product(get_the_ID());
 		
 		if($product && $product->is_on_backorder())
 		{

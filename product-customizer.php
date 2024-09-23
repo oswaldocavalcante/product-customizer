@@ -16,7 +16,7 @@
  * Plugin Name:       Product Customizer
  * Plugin URI:        https://https://github.com/oswaldocavalcante/product-customizer
  * Description:       Customize products in layers for WooCommerce.
- * Version:           1.0.0
+ * Version:           1.3.0
  * Author:            Oswaldo Cavalcante
  * Author URI:        https://oswaldocavalcante.com/
  * License:           GPL-2.0+
@@ -42,7 +42,7 @@ define('PCW_URL', plugins_url('/', __FILE__));
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PCW_VERSION', '1.0.0' );
+define( 'PCW_VERSION', '1.3.0' );
 
 /**
  * The code that runs during plugin activation.

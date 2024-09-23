@@ -41,10 +41,12 @@ class Pcw_Public
 
 			wp_enqueue_style('pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
 			wp_enqueue_script('pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'html2canvas'), PCW_VERSION, true);
-			wp_localize_script('pcw', 'pcw_ajax_object', array(
-				'url' 	=> admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('pcw_nonce'),
-				'currency_symbol' => get_woocommerce_currency_symbol(),
+			wp_localize_script('pcw', 'pcw_ajax_object', array
+			(
+				'url' 				=> admin_url('admin-ajax.php'),
+				'nonce' 			=> wp_create_nonce('pcw_nonce'),
+				'is_admin' 			=> current_user_can('edit_posts'),
+				'currency_symbol' 	=> get_woocommerce_currency_symbol(),
 			));
 		}
 	}

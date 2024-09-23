@@ -18,7 +18,7 @@ jQuery(document).ready(function ($)
 		productWrapper.addClass(`pcw_${view}`);
 		productWrapper.html
 		(`
-			<div id="canvas_container_${view}">
+			<div id="canvas_container_${view}" class="canvas_container">
 				<canvas id="canvas_${view}" width="${productWrapper.width()}" height="${productWrapper.height()}" data-image-url="${productWrapper.find('a').attr('href')}"></canvas>
 				<div id="pcw_logo_container_${view}" class="pcw_logo_container" style="display: none;">
 					<canvas id="pcw_logo_canvas_${view}" class="pcw_logo_canvas"></canvas>
@@ -33,6 +33,10 @@ jQuery(document).ready(function ($)
 			</div>
 		`);
 
+		if (pcw_ajax_object.is_admin) {
+			$(productWrapper).prepend('<a class="pcw_button_save_image"></a>');
+		}
+
 		const canvas = document.getElementById(`canvas_${view}`);
 		const img = new Image();
 		img.src = originalImageURL;
@@ -44,8 +48,6 @@ jQuery(document).ready(function ($)
 
 		render(document.getElementById(`canvas_${view}`), rgbToHex(defaultColor.css('background-color')));
 	}
-
-	// $('.woocommerce-product-gallery').prepend('<button id="pcw_save_button">Salvar Customizações</button>');
 
 	$(document).on('click', '.pcw_color', function ()
 	{
@@ -494,6 +496,24 @@ jQuery(document).ready(function ($)
 		// Disparar um evento customizado com o novo preço
 		$(document).trigger('pcw_price_updated', [newPrice, additionalCost]);
 	}
+
+	$(document).on('click', '.pcw_button_save_image', async function() 
+	{
+		const canvas_container = $(this).siblings('.canvas_container').get(0);
+
+		await html2canvas(canvas_container)
+		.then(function(canvas)
+		{
+			var image = canvas.toDataURL("image/png");
+			var link = document.createElement('a');
+			link.download = 'ry-product.png';
+			link.href = image;
+			link.click();
+		})
+		.catch(function(error) {
+			console.error('Erro ao capturar imagem:', error);
+		});
+	});
 
 	// Used by external hooks
 	$(document).on('pcw_save_customizations', function() 

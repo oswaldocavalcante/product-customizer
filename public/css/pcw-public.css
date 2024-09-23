@@ -1,3 +1,8 @@
+.woocommerce-product-gallery__image
+{
+    position: relative;
+}
+
 #pcw_color_container
 {
     width: 100%;
@@ -293,7 +298,7 @@
     display: none;
 }
 
-#pcw_save_button
+.pcw_button_save_image
 {
     width: 36px;
     height: 36px;
@@ -302,14 +307,15 @@
     position: absolute;
     top: 15px;
     right: 15px;
+    cursor: pointer;
     z-index: 1;
 }
 
-#pcw_save_button::before
+.pcw_button_save_image::before
 {
     font-family: WooCommerce;
-    content: '\e015';
-    font-size: 25px;
+    content: '\e02e';
+    font-size: 20px;
     line-height: 25px;
     position: absolute;
     left: 50%;
@@ -318,7 +324,7 @@
     opacity: 70%;
 }
 
-#pcw_save_button:hover
+.pcw_button_save_image:hover
 {
     color: #00FF00;
 }

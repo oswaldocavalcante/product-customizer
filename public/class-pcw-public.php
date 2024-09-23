@@ -222,7 +222,8 @@ class Pcw_Public
 
 		$upload_overrides = array(
 			'test_form' => false,
-			'mimes' 	=> array(
+			'mimes' 	=> array
+			(
 				'jpg|jpeg|jpe' => 'image/jpeg',
 				'png'          => 'image/png',
 				'gif'          => 'image/gif',

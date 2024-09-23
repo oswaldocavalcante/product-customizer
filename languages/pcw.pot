@@ -1,0 +1,202 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Please insert a name and hexadecimal color value."
+msgstr ""
+
+msgid "Add new color"
+msgstr ""
+
+msgid "Please enter a name for the layer."
+msgstr ""
+
+msgid "Are you sure you want to delete this color?"
+msgstr ""
+
+msgid "Failed to delete color."
+msgstr ""
+
+msgid "Are you sure you want to delete this printing method?"
+msgstr ""
+
+msgid "Failed to delete printing method."
+msgstr ""
+
+msgid "Are you sure you want to delete this layer?"
+msgstr ""
+
+msgid "Failed to delete layer."
+msgstr ""
+
+msgid "Are you sure you want to delete this option?"
+msgstr ""
+
+msgid "Failed to delete option."
+msgstr ""
+
+msgid "Are you sure you want to delete this option color?"
+msgstr ""
+
+msgid "Failed to delete option color."
+msgstr ""
+
+msgid "The admin-specific functionality of the plugin."
+msgstr ""
+
+msgid "Customizations"
+msgstr ""
+
+msgid "Add custom variations for this product."
+msgstr ""
+
+msgid "Expand"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Enter customization"
+msgstr ""
+
+msgid "Add new"
+msgstr ""
+
+msgid "Enable customer notes"
+msgstr ""
+
+msgid "Background"
+msgstr ""
+
+msgid "Upload Image"
+msgstr ""
+
+msgid "Colors"
+msgstr ""
+
+msgid "Add color options to the product image."
+msgstr ""
+
+msgid "Hexadecimal"
+msgstr ""
+
+msgid "Color name"
+msgstr ""
+
+msgid "Add color"
+msgstr ""
+
+msgid "Printing methods"
+msgstr ""
+
+msgid "Add overlay printing methods for this product."
+msgstr ""
+
+msgid "Add printing method"
+msgstr ""
+
+msgid "Disclaimer"
+msgstr ""
+
+msgid "(Optional) Disclaimer instructions about the product."
+msgstr ""
+
+msgid "Save customizations"
+msgstr ""
+
+msgid "Front Image"
+msgstr ""
+
+msgid "Back Image"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Cost $"
+msgstr ""
+
+msgid "Method name"
+msgstr ""
+
+msgid "(Optional) Description"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "New option"
+msgstr ""
+
+msgid "No permission"
+msgstr ""
+
+msgid "Color deleted"
+msgstr ""
+
+msgid "No color found"
+msgstr ""
+
+msgid "No color ID specified"
+msgstr ""
+
+msgid "Printing method deleted"
+msgstr ""
+
+msgid "No printing method found"
+msgstr ""
+
+msgid "No printing method ID specified"
+msgstr ""
+
+msgid "Layer deleted"
+msgstr ""
+
+msgid "No layer found"
+msgstr ""
+
+msgid "No layer ID specified"
+msgstr ""
+
+msgid "Option deleted"
+msgstr ""
+
+msgid "No layers found"
+msgstr ""
+
+msgid "No option ID specified"
+msgstr ""
+
+msgid "Color option deleted"
+msgstr ""
+
+msgid "No option color found"
+msgstr ""
+
+msgid "No option color ID specified"
+msgstr ""
+
+msgid "Write down notes to help us with your quote..."
+msgstr ""
+
+msgid "Customizations saved successfully"
+msgstr ""
+
+msgid "Front"
+msgstr ""
+
+msgid "Drop your logo here or"
+msgstr ""
+
+msgid "Send image"
+msgstr ""
+
+msgid "Select printing method"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
+msgid "Drop your art here or"
+msgstr ""

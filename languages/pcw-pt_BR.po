@@ -186,7 +186,7 @@ msgid "No option color ID specified"
 msgstr "Nenhum ID de cor de opção especificado"
 
 msgid "Write down notes to help us with your quote..."
-msgstr "Adicione observações para nos ajudar com sei orçamento..."
+msgstr "Adicione observações para nos ajudar com seu orçamento..."
 
 msgid "Customizations saved successfully"
 msgstr "Personalizações salvas com sucesso"

@@ -13,16 +13,21 @@
  * @package           Pcw
  *
  * @wordpress-plugin
- * Plugin Name:       Product Customizer
+ * Plugin Name:       Product Customizer for WooCommerce
  * Plugin URI:        https://https://github.com/oswaldocavalcante/product-customizer
  * Description:       Customize products in layers for WooCommerce.
- * Version:           1.3.4
+ * Version:           1.3.5
  * Author:            Oswaldo Cavalcante
  * Author URI:        https://oswaldocavalcante.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       pcw
  * Domain Path:       /languages
+ * Requires Plugins:  woocommerce
+ * Tested up to: 6.6.2
+ * Requires PHP: 7.2
+ * WC requires at least: 4.0
+ * WC tested up to: 9.3.3
  */
 
 // If this file is called directly, abort.
@@ -42,7 +47,7 @@ define('PCW_URL', plugins_url('/', __FILE__));
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PCW_VERSION', '1.3.4' );
+define( 'PCW_VERSION', '1.3.5' );
 
 /**
  * The code that runs during plugin activation.

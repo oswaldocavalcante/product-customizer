@@ -10,6 +10,27 @@
     gap: 4px;
 }
 
+#pcw_color_container .dashicons-before:before
+{
+    position: absolute;
+    line-height: 35px;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.pcw_custom_option_color_container.dashicons-before:before
+{
+    position: absolute;
+    z-index: 1;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 15px;
+    pointer-events: none;
+}
+
 .pcw_color
 {
     width: 35px;
@@ -17,6 +38,12 @@
     border-radius: 10px;
     border: 2px solid #ccc;
     cursor: pointer;
+}
+
+.iris-picker
+{
+    z-index: 100;
+    position: absolute;
 }
 
 #pcw_layers_menu

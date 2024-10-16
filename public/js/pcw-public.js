@@ -49,6 +49,82 @@ jQuery(document).ready(function ($)
 		render(document.getElementById(`canvas_${view}`), rgbToHex(defaultColor.css('background-color')));
 	}
 
+	if (pcw_ajax_object.is_admin) 
+	{
+		var default_custom_color = '#b4e415';
+		$('#pcw_color_container').append
+		(`
+			<div id="pcw_custom_color_container" class="dashicons-before dashicons-color-picker">
+				<input id="pcw_custom_color" class="pcw_color" style="background-color: ${default_custom_color}; color: ${default_custom_color}" value="${default_custom_color}" data-default-color="${default_custom_color}" readonly />
+			</div>
+		`);
+
+		var custom_color = $('#pcw_custom_color');
+		custom_color.iris
+		({
+			defaultColor: true,
+			hide: true,
+			palettes: false,
+			clear: function () {},
+			change: function (event, ui)
+			{
+				custom_color.css('background-color', event.target.value);
+				custom_color.css('color', event.target.value);
+				custom_color.trigger('click');
+				
+				$('.pcw_color').removeClass('active');
+				custom_color.addClass('active');
+			}
+		});
+
+		$(document).on('click', function (event)
+		{
+			var $target = $(event.target);
+
+			if (!$target.closest('#pcw_custom_color').length && custom_color.hasClass('active')) {
+				$('#pcw_custom_color_container .iris-picker').fadeOut();
+			}
+
+			if (!$target.closest('.pcw_custom_option_color').length) {
+				$('.pcw_custom_option_color_container .iris-picker').fadeOut();
+			}
+		});
+
+		$(document).on('click', '#pcw_custom_color', function()
+		{
+			$('#pcw_custom_color_container .iris-picker').fadeIn();
+		});
+
+		$('.pcw_option_colors').append
+		(`
+			<div class="pcw_custom_option_color_container dashicons-before dashicons-color-picker">
+				<input class="pcw_custom_option_color pcw_option_color" style="background-color: ${default_custom_color}; color: ${default_custom_color}" value="${default_custom_color}" data-default-color="${default_custom_color}" readonly />
+			</div>
+		`);
+
+		var custom_option_color = $('.pcw_custom_option_color');
+		custom_option_color.iris
+		({
+			defaultColor: true,
+			hide: true,
+			palettes: false,
+			clear: function () { },
+			change: function (event, ui)
+			{
+				var pcw_option_color = $(event.target);
+				pcw_option_color.css('background-color', event.target.value);
+				pcw_option_color.css('color', event.target.value);
+				pcw_option_color.toggleClass('active');	
+				pcw_option_color.trigger('click');
+			}
+		});
+
+		$(document).on('click', '.pcw_custom_option_color', function ()
+		{
+			$(this).siblings('.iris-picker').fadeIn();
+		});
+	}
+
 	$(document).on('click', '.pcw_color', function ()
 	{
 		$('.pcw_color').removeClass('active');
@@ -133,6 +209,7 @@ jQuery(document).ready(function ($)
 		const r = (bigint >> 16) & 255;
 		const g = (bigint >> 8) & 255;
 		const b = bigint & 255;
+
 		return { r, g, b };
 	}
 	
@@ -180,15 +257,15 @@ jQuery(document).ready(function ($)
 		if($(this).hasClass('active')) {
 			$option.removeClass('active');
 			$(this).removeClass('active');
-			optionCanvasFront.fadeOut();
-			optionCanvasBack.fadeOut();
+			optionCanvasFront.hide();
+			optionCanvasBack.hide();
 		} else {
 			if ($option.hasClass('active')){
 				$option.find('.pcw_option_color').removeClass('active');
 			}
 			$(this).addClass('active');
-			optionCanvasFront.fadeIn();
-			optionCanvasBack.fadeIn();
+			optionCanvasFront.show();
+			optionCanvasBack.show();
 		}
 
 		updatePrice();
@@ -410,8 +487,10 @@ jQuery(document).ready(function ($)
 
 	function setupResizeInteraction(selector, direction) 
 	{
-		interact(selector).draggable({
-			onstart: function (event) {
+		interact(selector).draggable
+		({
+			onstart: function (event)
+			{
 				var $wrapper = $(event.target).closest('.pcw_logo_container');
 				var $canvas = $wrapper.find('.pcw_logo_canvas');
 				var canvas = $canvas[0];
@@ -422,7 +501,8 @@ jQuery(document).ready(function ($)
 				$canvas.data('original-width', canvas.width);
 				$canvas.data('original-height', canvas.height);
 			},
-			onmove: function (event) {
+			onmove: function (event)
+			{
 				var $wrapper = $(event.target).closest('.pcw_logo_container');
 				var $canvas = $wrapper.find('.pcw_logo_canvas');
 				resizeLogoWrapper(event, $wrapper, $canvas, direction);
@@ -436,7 +516,8 @@ jQuery(document).ready(function ($)
 
 	interact('.pcw_logo_container').draggable
 	({
-		onmove: function (event) {
+		onmove: function (event)
+		{
 			var wrapper = $(event.target).closest('.pcw_logo_container');
 			var x = (parseFloat(wrapper.attr('data-x')) || 0) + event.dx;
 			var y = (parseFloat(wrapper.attr('data-y')) || 0) + event.dy;

@@ -18,7 +18,7 @@ jQuery(document).ready(function ($)
         var newColor = template
             .replace(/<%= colorValue %>/g, colorValue)
             .replace(/<%= colorName %>/g, colorName)
-            ;
+        ;
 
         $('#pcw-metabox-content-colors').append(newColor);
     });

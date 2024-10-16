@@ -37,16 +37,12 @@ class Pcw_Public
 			wp_enqueue_script('interactjs', 'https://cdn.jsdelivr.net/npm/interactjs@1.10.11/dist/interact.min.js', array(), null, true);
 			wp_enqueue_script('html2canvas', 'https://html2canvas.hertzen.com/dist/html2canvas.min.js', array(), '1.4.1', true);
 
-			wp_enqueue_style('pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
-			
-			$dependencies = array('jquery', 'woocommerce', 'html2canvas');
-			if (current_user_can('edit_posts')) 
-			{
-				// $dependencies[] = 'wp-color-picker';
-
+			if (current_user_can('edit_posts')) {
 				wp_enqueue_script('iris', admin_url('js/iris.min.js'), array('jquery-ui-draggable', 'jquery-ui-slider', 'jquery-touch-punch'), false, 1);
 			}
-			wp_enqueue_script('pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', $dependencies, PCW_VERSION, true);
+			
+			wp_enqueue_style('pcw', plugin_dir_url(__FILE__) . 'css/pcw-public.css', array(), PCW_VERSION, 'all');
+			wp_enqueue_script('pcw', plugin_dir_url(__FILE__) . 'js/pcw-public.js', array('jquery', 'woocommerce', 'html2canvas'), PCW_VERSION, true);
 			wp_localize_script('pcw', 'pcw_ajax_object', array
 			(
 				'url' 				=> admin_url('admin-ajax.php'),

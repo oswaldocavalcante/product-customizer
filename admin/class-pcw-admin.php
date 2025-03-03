@@ -22,6 +22,14 @@
  */
 class Pcw_Admin
 {
+	public function declare_wc_compatibility()
+	{
+		if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class))
+		{
+			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', PCW_PLUGIN_FILE, true);
+		}
+	}
+	
 	public function add_woocommerce_integration($integrations)
 	{
 		require_once PCW_ABSPATH . 'includes/class-pcw-integration.php';

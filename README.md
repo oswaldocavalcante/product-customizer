@@ -1,12 +1,7 @@
 # Product Customizer for WooCommerce (PCW)
 
-Plugin Name: Product Customizer for WooCommerce
-Author: Oswaldo Cavalcante
-Author URI: https://oswaldocavalcante.com/
-Donate link: https://oswaldocavalcante.com/
-Version: 1.0.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+- Author: [Oswaldo Cavalcante](https://oswaldocavalcante.com/)
+- License: [GPLv2 or later](http://www.gnu.org/licenses/gpl-2.0.html)
 
 ## Description
 

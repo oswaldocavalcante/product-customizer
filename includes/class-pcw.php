@@ -63,21 +63,8 @@ class Pcw
 	 */
 	private function load_dependencies()
 	{
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-pcw-i18n.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-pcw-admin.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-pcw-public.php';
 	}
 
@@ -97,17 +84,11 @@ class Pcw
 		add_action('plugins_loaded', array($plugin_i18n, 'load_plugin_textdomain'));
 	}
 
-	/**
-	 * Register all of the hooks related to the admin area functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
 	private function define_admin_hooks()
 	{
 		$plugin_admin = new Pcw_Admin();
-		
+
+		add_action('before_woocommerce_init',       	array($plugin_admin, 'declare_wc_compatibility'));
 		add_filter('woocommerce_integrations', 			array($plugin_admin, 'add_woocommerce_integration'));
 		add_filter('woocommerce_product_data_tabs', 	array($plugin_admin, 'add_tab'));
 		add_action('woocommerce_product_data_panels', 	array($plugin_admin, 'add_panel'));
@@ -120,13 +101,6 @@ class Pcw
 		add_action('wp_ajax_pcw_delete_option_color', 	array($plugin_admin, 'delete_option_color_callback'));
 	}
 
-	/**
-	 * Register all of the hooks related to the public-facing functionality
-	 * of the plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
 	private function define_public_hooks()
 	{
 		$plugin_public = new Pcw_Public();
